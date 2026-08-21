@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<meta name="apple-mobile-web-app-title" content="Monetizer"/>
+<meta name="theme-color" content="#0a0a0a"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<title>Brand Monetizer</title>
+<link rel="apple-touch-icon" href="data:image/png;base64,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"/>
+<link rel="icon" type="image/png" href="data:image/png;base64,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"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;}
+:root{
+  --bg:#f5f4f0;--card:#ffffff;--border:#e8e6e0;--text:#0a0a0a;--muted:#a0998a;
+  --dark:#0a0a0a;--dark-fg:#ffffff;--green:#16a34a;--green-bg:#f0fdf4;
+  --red:#dc2626;--red-bg:#fef2f2;--amber:#d97706;--amber-bg:#fffbeb;
+  --r:18px;--font:'DM Sans',sans-serif;--serif:'Playfair Display',serif;
+}
+html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--text);overflow:hidden;}
+.app-shell{display:flex;height:100dvh;width:100%;position:relative;}
+.main-col{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;}
+
+.page{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 0 100px 0;}
+.page-inner{padding:16px;}
+
+.topbar{padding:52px 20px 12px;background:var(--bg);flex-shrink:0;display:flex;align-items:flex-end;justify-content:space-between;border-bottom:1px solid var(--border);gap:10px;}
+.topbar-left h1{font-family:var(--serif);font-size:24px;font-weight:900;letter-spacing:-0.03em;line-height:1.1;}
+.topbar-left p{font-size:12px;color:var(--muted);margin-top:4px;}
+.top-action{background:var(--dark);color:var(--dark-fg);border:none;border-radius:50px;padding:10px 18px;font-size:13px;font-weight:600;font-family:var(--font);cursor:pointer;white-space:nowrap;min-height:44px;display:flex;align-items:center;flex-shrink:0;}
+
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--dark);display:flex;justify-content:space-around;align-items:center;padding:10px 4px calc(10px + env(safe-area-inset-bottom, 12px));z-index:100;}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;cursor:pointer;padding:6px 2px;border-radius:12px;transition:background 0.15s;min-height:54px;justify-content:center;}
+.nav-btn.active{background:rgba(255,255,255,0.1);}
+.nav-icon{font-size:19px;}
+.nav-label{font-size:9.5px;font-family:var(--font);font-weight:500;color:#666;letter-spacing:0.03em;}
+.nav-btn.active .nav-label{color:#fff;}
+
+.sidebar{display:none;flex-direction:column;width:224px;flex-shrink:0;background:var(--dark);padding:20px 12px;gap:2px;overflow-y:auto;}
+.sidebar-brand{font-family:var(--serif);font-size:19px;font-weight:900;color:#fff;padding:6px 10px 18px;letter-spacing:-0.02em;}
+.sidebar-group-label{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:0.1em;font-weight:700;padding:14px 12px 6px;}
+.sidebar-btn{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;background:none;border:none;color:#999;font-family:var(--font);font-size:13px;cursor:pointer;text-align:left;width:100%;}
+.sidebar-btn:hover{color:#ddd;}
+.sidebar-btn.active{background:rgba(255,255,255,0.12);color:#fff;font-weight:600;}
+
+@media (min-width:860px){
+  html,body{overflow:hidden;}
+  .sidebar{display:flex;}
+  .bottom-nav{display:none;}
+  .page-inner{max-width:800px;margin:0 auto;padding:28px 32px;}
+  .topbar{padding:28px 32px 16px;}
+}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:12px;}
+.card-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:14px;}
+
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;}
+.stat-card.dark{background:var(--dark);border-color:var(--dark);}
+.stat-card.green{background:var(--green-bg);border-color:#bbf7d0;}
+.stat-card.red{background:var(--red-bg);border-color:#fecaca;}
+.stat-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;}
+.stat-card.dark .stat-label{color:#555;}
+.stat-value{font-family:var(--serif);font-size:22px;font-weight:700;line-height:1;color:var(--text);}
+.stat-card.dark .stat-value{color:#fff;}
+.stat-card.green .stat-value{color:var(--green);}
+.stat-card.red .stat-value{color:var(--red);}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:4px;}
+.stat-card.dark .stat-sub{color:#444;}
+
+.field{margin-bottom:14px;}
+.field-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;display:block;}
+.input-wrap{display:flex;align-items:center;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color 0.15s;}
+.input-wrap:focus-within{border-color:var(--dark);}
+.input-suffix{padding:0 12px;font-size:15px;color:var(--muted);font-weight:500;}
+.input-wrap input[type=text],.input-wrap input[type=number],.input-wrap input[type=date],.input-wrap input[type=month]{flex:1;border:none;background:transparent;padding:14px 14px;font-size:15px;color:var(--text);font-family:var(--font);outline:none;min-height:48px;min-width:0;}
+.input-wrap input::placeholder{color:#ccc;}
+.input-wrap input[type=file]{flex:1;padding:12px 14px;font-size:13px;font-family:var(--font);color:var(--text);}
+select{width:100%;border:1.5px solid var(--border);border-radius:12px;padding:14px;font-size:15px;color:var(--text);font-family:var(--font);background:var(--bg);outline:none;min-height:48px;-webkit-appearance:none;appearance:none;}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:14px;padding:15px 20px;font-size:15px;font-weight:600;font-family:var(--font);cursor:pointer;min-height:52px;width:100%;transition:opacity 0.15s,transform 0.1s;}
+.btn:active{opacity:0.85;transform:scale(0.98);}
+.btn-dark{background:var(--dark);color:#fff;}
+.btn-outline{background:transparent;color:var(--text);border:1.5px solid var(--border);}
+.btn-red{background:var(--red-bg);color:var(--red);border:1.5px solid #fecaca;}
+.btn-sm{min-height:38px;padding:8px 14px;font-size:13px;border-radius:10px;width:auto;}
+
+.row-item{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:8px;gap:10px;}
+.row-item-left{flex:1;min-width:0;}
+.row-item-name{font-size:14px;font-weight:600;color:var(--text);}
+.row-item-sub{font-size:12px;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.row-item-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.amount{font-size:15px;font-weight:700;}
+.amount.green{color:var(--green);}
+.amount.red{color:var(--red);}
+
+.pill{display:inline-flex;align-items:center;padding:4px 10px;border-radius:50px;font-size:11px;font-weight:600;}
+.pill.green{background:var(--green-bg);color:var(--green);}
+.pill.red{background:var(--red-bg);color:var(--red);}
+.pill.amber{background:var(--amber-bg);color:var(--amber);}
+
+.divider{height:1px;background:var(--border);margin:14px 0;}
+
+.progress-wrap{background:var(--border);border-radius:99px;height:8px;overflow:hidden;margin-top:8px;}
+.progress-bar{height:100%;border-radius:99px;transition:width 0.4s;}
+
+.del-btn{background:none;border:none;color:#ccc;font-size:18px;cursor:pointer;padding:6px;min-width:32px;min-height:32px;display:flex;align-items:center;justify-content:center;}
+
+.sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:flex-end;justify-content:center;}
+.sheet{background:var(--card);border-radius:24px 24px 0 0;width:100%;max-width:460px;padding:20px 20px calc(28px + env(safe-area-inset-bottom, 12px));max-height:88vh;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.sheet-handle{width:40px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 18px;}
+.sheet-title{font-family:var(--serif);font-size:22px;font-weight:700;margin-bottom:18px;}
+
+.empty{text-align:center;padding:48px 20px;color:var(--muted);}
+.empty-icon{font-size:40px;margin-bottom:12px;}
+.empty p{font-size:14px;}
+
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px;}
+.section-head h2{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;}
+
+.hidden{display:none!important;}
+
+.back-btn{display:flex;align-items:center;gap:6px;background:none;border:none;font-size:14px;color:var(--muted);font-family:var(--font);cursor:pointer;padding:0;margin-bottom:16px;}
+
+.sale-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);gap:10px;}
+.sale-row:last-child{border-bottom:none;}
+
+.filter-bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}
+.filter-bar input[type=text],.filter-bar input[type=date],.filter-bar input[type=month]{border:1.5px solid var(--border);border-radius:10px;padding:9px 12px;font-size:13px;font-family:var(--font);background:var(--card);outline:none;flex:1;min-width:130px;}
+
+.type-tabs{display:flex;gap:6px;background:var(--bg);padding:4px;border-radius:12px;margin-bottom:16px;}
+.type-tab{flex:1;padding:9px 4px;border:none;background:none;border-radius:9px;font-size:12.5px;font-weight:600;color:var(--muted);font-family:var(--font);cursor:pointer;}
+.type-tab.active{background:var(--dark);color:#fff;}
+
+.danger-zone{border:1.5px solid #fecaca;border-radius:14px;padding:16px;background:var(--red-bg);}
+
+.doc-section{margin-bottom:20px;}
+.doc-section h3{font-family:var(--serif);font-size:16px;font-weight:700;margin-bottom:8px;}
+.doc-section p{font-size:13.5px;line-height:1.65;color:#333;margin-bottom:8px;}
+.doc-section ul{margin:6px 0 10px 20px;}
+.doc-section li{font-size:13.5px;line-height:1.65;color:#333;margin-bottom:5px;}
+.callout{background:var(--amber-bg);border:1px solid #fde68a;border-radius:14px;padding:14px 16px;font-size:12.5px;color:#92400e;line-height:1.6;margin-bottom:16px;}
+.callout.info{background:#eff6ff;border-color:#bfdbfe;color:#1e40af;}
+.callout b{font-weight:700;}
+
+#bm-toast{position:fixed;bottom:92px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;padding:9px 18px;border-radius:50px;font-size:12px;font-family:var(--font);font-weight:500;z-index:500;opacity:0;transition:opacity 0.25s;pointer-events:none;white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,0.25);}
+@media (min-width:860px){ #bm-toast{bottom:24px;} }
+</style>
+</head>
+<body>
+<div class="app-shell" id="app">
+  <nav class="sidebar" id="sidebar"></nav>
+  <div class="main-col">
+    <div class="topbar" id="topbar">
+      <div class="topbar-left">
+        <h1 id="page-title">Overview</h1>
+        <p id="page-sub">Your brand at a glance</p>
+      </div>
+      <button class="top-action hidden" id="top-action-btn" onclick="openAddSheet()">+ Add</button>
+    </div>
+    <div class="page" id="main-page">
+      <div class="page-inner" id="page-content"></div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="navigate('dashboard')" id="nav-dashboard"><span class="nav-icon">◈</span><span class="nav-label">Overview</span></button>
+    <button class="nav-btn" onclick="navigate('entries')" id="nav-entries"><span class="nav-icon">📒</span><span class="nav-label">Entries</span></button>
+    <button class="nav-btn" onclick="navigate('products')" id="nav-products"><span class="nav-icon">📦</span><span class="nav-label">Products</span></button>
+    <button class="nav-btn" onclick="navigate('report')" id="nav-report"><span class="nav-icon">📊</span><span class="nav-label">Report</span></button>
+    <button class="nav-btn" onclick="openMoreMenu()" id="nav-more"><span class="nav-icon">☰</span><span class="nav-label">More</span></button>
+  </nav>
+</div>
+
+<div class="sheet-overlay hidden" id="sheet-overlay" onclick="closeSheet(event)">
+  <div class="sheet" id="sheet"><div class="sheet-handle"></div><div id="sheet-content"></div></div>
+</div>
+
+<script>
+// ── DATA MODEL ─────────────────────────────────────────────────────────────
+const KEY = 'bm_data_v5';
+const LEGACY_KEY_V4 = 'bm_data_v4';
+const LEGACY_KEY_V3 = 'bm_data_v3';
+let data = null;
+let currentView = 'dashboard';
+let routeExtra = null;
+
+const INCOME_CATS = ['Product Sales','Pop-Up / Market','Wholesale','Other Income'];
+const EXPENSE_CATS = ['Bulk Production','Samples','Packaging & Shipping','Marketing & Ads','Taxes & Fees','Software & Tools','Studio / Rent','Market Stall / Event','Other'];
+const FIXED_COST_CATS = ['Rent','Software & Tools','Insurance','Subscriptions','Loan / Leasing','Other'];
+const DROP_BUDGET_CATS = ['Bulk Production','Samples','Taxes & Fees','Marketing','Packaging & Shipping','Fixed Costs','Other'];
+
+function defaultData(){
+  return { meta:{businessName:'My Brand'}, income:[], expenses:[], fixedCosts:[], products:[], drops:[] };
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(data)); }catch(e){} }
+
+function load(){
+  data = defaultData();
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(raw){
+      const d = JSON.parse(raw);
+      data = {
+        meta: d.meta || defaultData().meta,
+        income: Array.isArray(d.income) ? d.income : [],
+        expenses: Array.isArray(d.expenses) ? d.expenses : [],
+        fixedCosts: Array.isArray(d.fixedCosts) ? d.fixedCosts : [],
+        products: Array.isArray(d.products) ? d.products : [],
+        drops: Array.isArray(d.drops) ? d.drops : []
+      };
+      return;
+    }
+    const v4raw = localStorage.getItem(LEGACY_KEY_V4);
+    if(v4raw){ migrateFromV4(JSON.parse(v4raw)); window._migrated=true; return; }
+    const v3raw = localStorage.getItem(LEGACY_KEY_V3);
+    if(v3raw){ migrateFromV3(JSON.parse(v3raw)); window._migrated=true; return; }
+  }catch(e){}
+}
+
+function migrateFromV4(old){
+  data = defaultData();
+  data.meta.businessName = (old.meta && old.meta.businessName) || 'My Brand';
+  data.products = (old.products||[]).map(p=>{ const copy = Object.assign({}, p); delete copy.sales; delete copy.costPosted; return copy; });
+  (old.products||[]).forEach(p=>{
+    (p.sales||[]).forEach(s=>{
+      if(n(s.amount)<=0) return;
+      data.income.push({id:uid(), date:s.date||isoToday(), amount:n(s.amount), description:s.note||'', category:'Product Sales', productId:p.id, units:1, dropId:null, fileId:null, ts:Date.now()});
+    });
+  });
+  (old.entries||[]).forEach(en=>{
+    if(['invoice-payment','bill-payment','transfer','journal','product-sale'].includes(en.sourceType)) return;
+    const amount = (en.lines||[]).reduce((s,l)=>s+n(l.debit),0);
+    if(amount<=0) return;
+    const dLine = (en.lines||[]).find(l=>n(l.debit)>0);
+    const cLine = (en.lines||[]).find(l=>n(l.credit)>0);
+    const dAcct = dLine ? (old.accounts||[]).find(a=>a.id===dLine.accountId) : null;
+    const cAcct = cLine ? (old.accounts||[]).find(a=>a.id===cLine.accountId) : null;
+    if(cAcct && cAcct.type==='income'){
+      data.income.push({id:uid(), date:en.date, amount, description:en.memo||'', category:cAcct.name, productId:null, units:null, dropId:null, fileId:en.fileId||null, ts:en.ts||Date.now()});
+    } else if(dAcct && dAcct.type==='expense'){
+      data.expenses.push({id:uid(), date:en.date, amount, description:en.memo||'', category:dAcct.name, dropId:null, dropCategory:null, fileId:en.fileId||null, ts:en.ts||Date.now()});
+    }
+  });
+  (old.budgets||[]).forEach(b=>{
+    const acct = (old.accounts||[]).find(a=>a.id===b.accountId);
+    data.fixedCosts.push({id:uid(), name:b.name||'Budget', amount:n(b.limit), category:acct?acct.name:'Other', active:true});
+  });
+  save();
+}
+
+function migrateFromV3(old){
+  data = defaultData();
+  (old.products||[]).forEach(p=>{
+    (p.sales||[]).forEach(s=>{
+      if(n(s.amount)<=0) return;
+      data.income.push({id:uid(), date:isoToday(), amount:n(s.amount), description:s.note||'', category:'Product Sales', productId:p.id, units:1, dropId:null, fileId:null, ts:Date.now()});
+    });
+  });
+  data.products = (old.products||[]).map(p=>{ const copy = Object.assign({}, p); delete copy.sales; return copy; });
+  (old.expenses||[]).forEach(e=>{
+    const amt = n(e.amount); if(amt<=0) return;
+    data.expenses.push({id:uid(), date:isoToday(), amount:amt, description:e.name||'', category:e.category||'Other', dropId:null, dropCategory:null, fileId:null, ts:Date.now()});
+  });
+  (old.budgets||[]).forEach(b=>{
+    data.fixedCosts.push({id:uid(), name:b.name||'Budget', amount:n(b.limit), category:b.category||'Other', active:true});
+  });
+  save();
+}
+
+// ── FILE STORAGE (IndexedDB) ──────────────────────────────────────────────
+const FILES_DB = 'bm_files_db_v1';
+const FILES_STORE = 'files';
+function openFilesDB(){
+  return new Promise((resolve,reject)=>{
+    if(!window.indexedDB){ reject(new Error('IndexedDB not supported in this browser')); return; }
+    const req = indexedDB.open(FILES_DB, 1);
+    req.onupgradeneeded = e=>{
+      const db=e.target.result;
+      if(!db.objectStoreNames.contains(FILES_STORE)) db.createObjectStore(FILES_STORE, {keyPath:'id'});
+    };
+    req.onsuccess = e=>resolve(e.target.result);
+    req.onerror = e=>reject(e.target.error);
+  });
+}
+async function dbPutFile(rec){
+  const db = await openFilesDB();
+  return new Promise((resolve,reject)=>{
+    const tx = db.transaction(FILES_STORE,'readwrite');
+    tx.objectStore(FILES_STORE).put(rec);
+    tx.oncomplete=()=>resolve();
+    tx.onerror=()=>reject(tx.error);
+  });
+}
+async function dbGetAllFiles(){
+  const db = await openFilesDB();
+  return new Promise((resolve,reject)=>{
+    const tx = db.transaction(FILES_STORE,'readonly');
+    const req = tx.objectStore(FILES_STORE).getAll();
+    req.onsuccess=()=>resolve(req.result||[]);
+    req.onerror=()=>reject(req.error);
+  });
+}
+async function dbGetFile(id){
+  const db = await openFilesDB();
+  return new Promise((resolve,reject)=>{
+    const tx = db.transaction(FILES_STORE,'readonly');
+    const req = tx.objectStore(FILES_STORE).get(id);
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error);
+  });
+}
+async function dbDeleteFile(id){
+  const db = await openFilesDB();
+  return new Promise((resolve,reject)=>{
+    const tx = db.transaction(FILES_STORE,'readwrite');
+    tx.objectStore(FILES_STORE).delete(id);
+    tx.oncomplete=()=>resolve();
+    tx.onerror=()=>reject(tx.error);
+  });
+}
+
+// ── HELPERS ─────────────────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const n = v => parseFloat(v)||0;
+const fmt = v => n(v).toLocaleString('de-AT', {style:'currency', currency:'EUR'});
+const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const isoToday = () => new Date().toISOString().slice(0,10);
+const today = () => new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'});
+function fmtDate(iso){ if(!iso) return '—'; const d=new Date(iso+'T00:00:00'); if(isNaN(d)) return iso; return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+function fmtDateShort(iso){ if(!iso) return ''; const d=new Date(iso+'T00:00:00'); if(isNaN(d)) return iso; return d.toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
+function fmtSize(bytes){ bytes=bytes||0; if(bytes<1024) return bytes+' B'; if(bytes<1024*1024) return (bytes/1024).toFixed(1)+' KB'; return (bytes/1024/1024).toFixed(1)+' MB'; }
+function ym(dateIso){ return (dateIso||isoToday()).slice(0,7); }
+function monthLabel(ymStr){ const parts=(ymStr||'').split('-'); const y=parseInt(parts[0],10), m=parseInt(parts[1],10); if(!y||!m) return ymStr; const d=new Date(y,m-1,1); return d.toLocaleDateString('en-US',{month:'long',year:'numeric'}); }
+let toastTimer;
+function toast(msg){
+  let t = $('bm-toast');
+  if(!t){ t=document.createElement('div'); t.id='bm-toast'; document.body.appendChild(t); }
+  t.textContent = '✓ '+msg;
+  t.style.opacity='1';
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{ t.style.opacity='0'; }, 1600);
+}
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+function calcProduct(p){
+  const bulk=n(p.bulkCost), samp=n(p.sampleCost), units=n(p.units), price=n(p.price);
+  const mkt=n(p.mktAds)+n(p.mktInfluencer)+n(p.mktContent)+n(p.mktStall);
+  const totalCost=bulk+samp+mkt;
+  const revenue=(data.income||[]).filter(i=>i.productId===p.id).reduce((s,x)=>s+n(x.amount),0);
+  const profit=revenue-totalCost;
+  const breakEven=price>0?Math.ceil(totalCost/price):0;
+  const profitPerUnit=units>0?(price-(totalCost/units)):0;
+  return{bulk,samp,mkt,totalCost,revenue,profit,breakEven,profitPerUnit};
+}
+
+// ── MONTHLY MATH ──────────────────────────────────────────────────────────
+function activeFixedCostsTotal(){ return data.fixedCosts.filter(f=>f.active!==false).reduce((s,f)=>s+n(f.amount),0); }
+function monthIncome(ymStr){ return data.income.filter(i=>ym(i.date)===ymStr); }
+function monthExpenses(ymStr){ return data.expenses.filter(e=>ym(e.date)===ymStr); }
+function monthTotals(ymStr){
+  const inc = monthIncome(ymStr), exp = monthExpenses(ymStr);
+  const totalIncome = inc.reduce((s,i)=>s+n(i.amount),0);
+  const loggedExpenses = exp.reduce((s,e)=>s+n(e.amount),0);
+  const fixed = activeFixedCostsTotal();
+  const totalExpenses = loggedExpenses + fixed;
+  return { inc, exp, totalIncome, loggedExpenses, fixed, totalExpenses, net: totalIncome-totalExpenses };
+}
+
+// ── NAVIGATION SHELL ───────────────────────────────────────────────────────
+const SECTIONS = [
+  {group:'Overview', items:[ {id:'dashboard', label:'Overview', icon:'◈'} ]},
+  {group:'Bookkeeping', items:[
+    {id:'entries', label:'Income & Expenses', icon:'📒'},
+    {id:'fixedcosts', label:'Fixed Costs', icon:'🏷️'},
+    {id:'report', label:'Monthly Report', icon:'📊'}
+  ]},
+  {group:'Planning', items:[
+    {id:'products', label:'Products', icon:'📦'},
+    {id:'drops', label:'Drops & Budgets', icon:'🚀'}
+  ]},
+  {group:'', items:[
+    {id:'files', label:'Files', icon:'📎'},
+    {id:'taxguide', label:'Austria Tax Guide', icon:'🇦🇹'},
+    {id:'settings', label:'Settings', icon:'⚙️'}
+  ]}
+];
+const BOTTOM_NAV_IDS = ['dashboard','entries','products','report'];
+
+function buildSidebar(){
+  const sb = $('sidebar');
+  let html = `<div class="sidebar-brand">◈ Brand Monetizer</div>`;
+  SECTIONS.forEach(g=>{
+    if(g.group) html += `<div class="sidebar-group-label">${g.group}</div>`;
+    g.items.forEach(it=>{
+      html += `<button class="sidebar-btn" data-nav="${it.id}" onclick="navigate('${it.id}')"><span class="nav-icon">${it.icon}</span>${it.label}</button>`;
+    });
+  });
+  sb.innerHTML = html;
+}
+
+function baseView(view){
+  const map = {'product-detail':'products','drop-detail':'drops'};
+  return map[view]||view;
+}
+
+function navigate(view, extra){
+  currentView = view;
+  routeExtra = extra||null;
+  const base = baseView(view);
+  document.querySelectorAll('.nav-btn, .sidebar-btn').forEach(b=>b.classList.remove('active'));
+  if(BOTTOM_NAV_IDS.includes(base)) $('nav-'+base).classList.add('active');
+  else $('nav-more').classList.add('active');
+  const sbBtn = document.querySelector('.sidebar-btn[data-nav="'+base+'"]');
+  if(sbBtn) sbBtn.classList.add('active');
+  render();
+  const pg = $('main-page'); if(pg) pg.scrollTop = 0;
+}
+
+function openMoreMenu(){
+  const items = SECTIONS.flatMap(g=>g.items).filter(it=>!BOTTOM_NAV_IDS.includes(it.id));
+  $('sheet-content').innerHTML = `<div class="sheet-title">More</div>` + items.map(it=>`
+    <button class="row-item" style="width:100%;border:1px solid var(--border);cursor:pointer;" onclick="closeSheetThen('${it.id}')">
+      <div class="row-item-left"><div class="row-item-name">${it.icon} ${it.label}</div></div>
+      <span style="color:var(--muted)">›</span>
+    </button>`).join('');
+  showSheet();
+}
+function closeSheetThen(view){ $('sheet-overlay').classList.add('hidden'); navigate(view); }
+
+function render(){
+  const views = {
+    dashboard: renderDashboard,
+    entries: renderEntries,
+    fixedcosts: renderFixedCosts,
+    products: renderProducts,
+    'product-detail': renderProductDetail,
+    drops: renderDrops,
+    'drop-detail': renderDropDetail,
+    report: renderReport,
+    files: renderFiles,
+    taxguide: renderTaxGuide,
+    settings: renderSettings
+  };
+  (views[currentView]||renderDashboard)();
+}
+
+function showSheet(){ $('sheet-overlay').classList.remove('hidden'); }
+function closeSheet(e){ if(!e || e.target===$('sheet-overlay')) $('sheet-overlay').classList.add('hidden'); }
+
+function openAddSheet(){
+  const mode = window._sheetMode||'entry';
+  if(mode==='entry') openAddEntry();
+  else if(mode==='fixedcost') openAddFixedCost();
+  else if(mode==='product') openAddProduct();
+  else if(mode==='drop') openAddDrop();
+  else if(mode==='file') openAddFile();
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────────
+function renderDashboard(){
+  $('page-title').textContent = data.meta.businessName || 'Overview';
+  $('page-sub').textContent = "Here's how your brand is doing";
+  $('top-action-btn').classList.add('hidden');
+
+  const curMonth = isoToday().slice(0,7);
+  const t = monthTotals(curMonth);
+  const recent = [...data.income.map(i=>Object.assign({},i,{_type:'income'})), ...data.expenses.map(e=>Object.assign({},e,{_type:'expense'}))]
+    .sort((a,b)=>(b.ts||0)-(a.ts||0)).slice(0,6);
+
+  $('page-content').innerHTML = `
+    <div class="stat-grid">
+      <div class="stat-card green"><div class="stat-label">${monthLabel(curMonth)} Income</div><div class="stat-value">${fmt(t.totalIncome)}</div></div>
+      <div class="stat-card red"><div class="stat-label">${monthLabel(curMonth)} Expenses</div><div class="stat-value">${fmt(t.totalExpenses)}</div><div class="stat-sub">incl. ${fmt(t.fixed)} fixed costs</div></div>
+      <div class="stat-card ${t.net>=0?'green':'red'}" style="grid-column:span 2;"><div class="stat-label">${t.net>=0?'Profit':'Loss'} So Far This Month</div><div class="stat-value">${fmt(t.net)}</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Quick Actions</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <button class="btn btn-outline btn-sm" style="width:100%;" onclick="quickAction('income')">+ Income</button>
+        <button class="btn btn-outline btn-sm" style="width:100%;" onclick="quickAction('expense')">+ Expense</button>
+        <button class="btn btn-outline btn-sm" style="width:100%;" onclick="navigate('report')">📊 Monthly Report</button>
+        <button class="btn btn-outline btn-sm" style="width:100%;" onclick="navigate('drops')">🚀 Budget a Drop</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-head"><div class="card-title" style="margin-bottom:0;">Recent Activity</div><button class="btn btn-outline btn-sm" onclick="navigate('entries')">View all</button></div>
+      ${recent.length===0?`<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px;">No entries yet</div>`
+      :recent.map(x=>`<div class="sale-row"><div><div style="font-size:14px;font-weight:600;">${esc(x.description)||esc(x.category)||(x._type==='income'?'Income':'Expense')}</div><div style="font-size:12px;color:var(--muted)">${fmtDate(x.date)}</div></div><span class="amount ${x._type==='income'?'green':'red'}">${x._type==='expense'?'-':'+'}${fmt(x.amount)}</span></div>`).join('')}
+    </div>
+  `;
+}
+function quickAction(type){
+  navigate('entries');
+  setTimeout(()=>{ window._sheetMode='entry'; openAddEntry(type); },50);
+}
+
+// ── INCOME & EXPENSES (unified log) ──────────────────────────────────────
+function renderEntries(){
+  $('page-title').textContent='Income & Expenses';
+  $('page-sub').textContent='Log what came in and what went out';
+  $('top-action-btn').textContent='+ Entry';
+  $('top-action-btn').classList.remove('hidden');
+  window._sheetMode='entry';
+  window._entryFilter = window._entryFilter || {q:'', month:''};
+  const f = window._entryFilter;
+
+  let items = [...data.income.map(i=>Object.assign({},i,{_type:'income'})), ...data.expenses.map(e=>Object.assign({},e,{_type:'expense'}))];
+  if(f.month) items = items.filter(x=>ym(x.date)===f.month);
+  if(f.q){
+    const q = f.q.toLowerCase();
+    items = items.filter(x=>(x.description||'').toLowerCase().includes(q) || (x.category||'').toLowerCase().includes(q));
+  }
+  items.sort((a,b)=> a.date===b.date ? (b.ts||0)-(a.ts||0) : (a.date<b.date?1:-1));
+
+  const totalIncome = items.filter(x=>x._type==='income').reduce((s,x)=>s+n(x.amount),0);
+  const totalExpense = items.filter(x=>x._type==='expense').reduce((s,x)=>s+n(x.amount),0);
+
+  $('page-content').innerHTML = `
+    <div class="filter-bar">
+      <input type="text" placeholder="Search..." value="${esc(f.q)}" oninput="setEntryFilter('q',this.value)"/>
+      <input type="month" value="${f.month}" onchange="setEntryFilter('month',this.value)"/>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card green"><div class="stat-label">Income</div><div class="stat-value">${fmt(totalIncome)}</div></div>
+      <div class="stat-card red"><div class="stat-label">Expenses</div><div class="stat-value">${fmt(totalExpense)}</div></div>
+    </div>
+    ${items.length===0?`<div class="empty"><div class="empty-icon">📒</div><p>No entries yet.<br/>Tap + Entry to log income or an expense.</p></div>`
+    :items.map(x=>{
+      const drop = x.dropId ? data.drops.find(d=>d.id===x.dropId) : null;
+      const prod = x.productId ? data.products.find(p=>p.id===x.productId) : null;
+      return `<div class="row-item">
+        <div class="row-item-left">
+          <div class="row-item-name">${esc(x.description)||esc(x.category)||(x._type==='income'?'Income':'Expense')}</div>
+          <div class="row-item-sub">${fmtDate(x.date)} · ${esc(x.category)||''}${prod?(' · '+esc(prod.name)+(x.units?(' × '+x.units):'')):''}${drop?(' · '+esc(drop.name)):''}</div>
+        </div>
+        <div class="row-item-right">
+          <span class="amount ${x._type==='income'?'green':'red'}">${x._type==='expense'?'-':'+'}${fmt(x.amount)}</span>
+          ${x.fileId?`<button class="del-btn" style="color:var(--text)" onclick="viewFile('${x.fileId}')" title="View receipt">📎</button>`:''}
+          <button class="del-btn" onclick="deleteEntry('${x._type}','${x.id}')">✕</button>
+        </div>
+      </div>`;
+    }).join('')}
+  `;
+}
+function setEntryFilter(key,val){ window._entryFilter[key]=val; renderEntries(); }
+function deleteEntry(type,id){
+  if(!confirm('Delete this entry?')) return;
+  const arr = type==='income' ? data.income : data.expenses;
+  const item = arr.find(x=>x.id===id);
+  if(item && item.fileId) dbDeleteFile(item.fileId).catch(()=>{});
+  if(type==='income') data.income = data.income.filter(x=>x.id!==id);
+  else data.expenses = data.expenses.filter(x=>x.id!==id);
+  save(); toast('Entry deleted'); render();
+}
+
+// ── NEW ENTRY SHEET ───────────────────────────────────────────────────────
+function openAddEntry(type){
+  window._entryType = type || window._entryType || 'income';
+  renderEntrySheet();
+  showSheet();
+}
+function setEntryType(t){ window._entryType=t; renderEntrySheet(); }
+function toggleUnitsField(){
+  const wrap = $('e-units-wrap'); if(!wrap) return;
+  wrap.style.display = ($('e-product') && $('e-product').value) ? 'block' : 'none';
+}
+function toggleDropCatField(){
+  const wrap = $('e-dropcat-wrap'); if(!wrap) return;
+  const dropId = $('e-drop') ? $('e-drop').value : '';
+  if(!dropId){ wrap.style.display='none'; return; }
+  const drop = data.drops.find(d=>d.id===dropId);
+  const lines = drop ? (drop.budgetLines||[]) : [];
+  $('e-dropcat').innerHTML = lines.map(l=>`<option value="${esc(l.category)}">${esc(l.category)}</option>`).join('') || '<option value="">—</option>';
+  wrap.style.display = 'block';
+}
+function renderEntrySheet(){
+  const t = window._entryType;
+  const isIncome = t==='income';
+  const catOptions = (isIncome?INCOME_CATS:EXPENSE_CATS).map(c=>`<option value="${c}">${c}</option>`).join('');
+  $('sheet-content').innerHTML = `
+    <div class="sheet-title">New Entry</div>
+    <div class="type-tabs">
+      <button class="type-tab ${isIncome?'active':''}" onclick="setEntryType('income')">Income</button>
+      <button class="type-tab ${!isIncome?'active':''}" onclick="setEntryType('expense')">Expense</button>
+    </div>
+    <div class="field"><label class="field-label">Amount</label><div class="input-wrap"><input id="e-amt" type="number" placeholder="0.00"/><span class="input-suffix">€</span></div></div>
+    <div class="field"><label class="field-label">Date</label><div class="input-wrap"><input type="date" id="e-date" value="${isoToday()}"/></div></div>
+    <div class="field"><label class="field-label">Category</label><select id="e-cat">${catOptions}</select></div>
+    ${isIncome?`
+    <div class="field"><label class="field-label">Product (optional)</label><select id="e-product" onchange="toggleUnitsField()">
+      <option value="">— No product —</option>
+      ${data.products.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')}
+    </select></div>
+    <div class="field" id="e-units-wrap" style="display:none;"><label class="field-label">Units Sold</label><div class="input-wrap"><input id="e-units" type="number" placeholder="1"/></div></div>
+    `:''}
+    <div class="field"><label class="field-label">Link to Drop (optional)</label><select id="e-drop" onchange="toggleDropCatField()">
+      <option value="">— None —</option>
+      ${data.drops.map(d=>`<option value="${d.id}">${esc(d.name)}</option>`).join('')}
+    </select></div>
+    <div class="field" id="e-dropcat-wrap" style="display:none;"><label class="field-label">Budget Category</label><select id="e-dropcat"></select></div>
+    <div class="field"><label class="field-label">Description (optional)</label><div class="input-wrap"><input id="e-desc" type="text" placeholder="${isIncome?'e.g. Shopify order, market day...':'e.g. Instagram ads'}"/></div></div>
+    <div class="field" style="margin-bottom:0"><label class="field-label">Attach Receipt (optional)</label><div class="input-wrap"><input id="e-file" type="file"/></div></div>
+    <button class="btn btn-dark" style="margin-top:14px;" onclick="saveEntry()">Save Entry</button>
+  `;
+}
+function saveEntry(){
+  const t = window._entryType;
+  const amount = n($('e-amt').value); if(amount<=0){ alert('Enter an amount'); return; }
+  const date = $('e-date').value || isoToday();
+  const description = $('e-desc').value;
+  const category = $('e-cat').value;
+  const dropId = ($('e-drop') && $('e-drop').value) || null;
+  const dropCategory = (dropId && $('e-dropcat')) ? ($('e-dropcat').value||null) : null;
+
+  const buildAndPush = (fileId)=>{
+    let rec;
+    if(t==='income'){
+      const productId = ($('e-product') && $('e-product').value) || null;
+      const units = productId ? n($('e-units').value) : null;
+      rec = {id:uid(), date, amount, description, category, productId, units, dropId, fileId:fileId||null, ts:Date.now()};
+      data.income.push(rec);
+    } else {
+      rec = {id:uid(), date, amount, description, category, dropId, dropCategory, fileId:fileId||null, ts:Date.now()};
+      data.expenses.push(rec);
+    }
+    save(); closeSheet(); toast((t==='income'?'Income':'Expense')+' added'); render();
+    return rec;
+  };
+  const fInput = $('e-file'); const f = fInput && fInput.files[0];
+  if(f){
+    const fileRec = {id:uid(), name:f.name, note:description, size:f.size, type:f.type, date:today(), dateIso:date, ts:Date.now(), linkedType:t, linkedId:null, blob:f};
+    dbPutFile(fileRec).then(()=>{
+      const rec = buildAndPush(fileRec.id);
+      fileRec.linkedId = rec.id; dbPutFile(fileRec).catch(()=>{});
+    }).catch(()=>buildAndPush(null));
+  } else {
+    buildAndPush(null);
+  }
+}
+
+// ── FIXED COSTS ───────────────────────────────────────────────────────────
+function renderFixedCosts(){
+  $('page-title').textContent='Fixed Costs';
+  $('page-sub').textContent='Recurring monthly costs, counted automatically every month';
+  $('top-action-btn').textContent='+ Fixed Cost';
+  $('top-action-btn').classList.remove('hidden');
+  window._sheetMode='fixedcost';
+  const total = activeFixedCostsTotal();
+  $('page-content').innerHTML = `
+    <div class="stat-card dark" style="margin-bottom:12px;"><div class="stat-label">Total Monthly Fixed Costs</div><div class="stat-value">${fmt(total)}</div><div class="stat-sub">Automatically added to every month's expenses</div></div>
+    ${data.fixedCosts.length===0?`<div class="empty"><div class="empty-icon">🏷️</div><p>No fixed costs yet.<br/>Add rent, subscriptions, insurance...</p></div>`
+    : data.fixedCosts.map(f=>`
+      <div class="row-item">
+        <div class="row-item-left">
+          <div class="row-item-name">${esc(f.name)} ${f.active===false?'<span class="pill red" style="margin-left:6px;">Paused</span>':''}</div>
+          <div class="row-item-sub">${esc(f.category)}</div>
+        </div>
+        <div class="row-item-right">
+          <span class="amount" style="color:var(--text)">${fmt(f.amount)}/mo</span>
+          <button class="del-btn" onclick="toggleFixedCost('${f.id}')" title="Pause/resume">${f.active===false?'▶️':'⏸️'}</button>
+          <button class="del-btn" onclick="deleteFixedCost('${f.id}')">✕</button>
+        </div>
+      </div>`).join('')}
+  `;
+}
+function openAddFixedCost(){
+  $('sheet-content').innerHTML = `
+    <div class="sheet-title">New Fixed Cost</div>
+    <div class="field"><label class="field-label">Name</label><div class="input-wrap"><input id="fc-name" type="text" placeholder="e.g. Studio Rent"/></div></div>
+    <div class="field"><label class="field-label">Monthly Amount</label><div class="input-wrap"><input id="fc-amt" type="number" placeholder="0.00"/><span class="input-suffix">€</span></div></div>
+    <div class="field" style="margin-bottom:0"><label class="field-label">Category</label><select id="fc-cat">${FIXED_COST_CATS.map(c=>`<option>${c}</option>`).join('')}</select></div>
+    <button class="btn btn-dark" style="margin-top:14px;" onclick="saveNewFixedCost()">Save Fixed Cost</button>
+  `;
+  showSheet();
+}
+function saveNewFixedCost(){
+  const name = $('fc-name').value; if(!name){ alert('Name is required'); return; }
+  data.fixedCosts.push({id:uid(), name, amount:n($('fc-amt').value), category:$('fc-cat').value, active:true});
+  save(); closeSheet(); toast('Fixed cost added'); renderFixedCosts();
+}
+function toggleFixedCost(id){
+  const f = data.fixedCosts.find(x=>x.id===id); if(!f) return;
+  f.active = f.active===false ? true : false;
+  save(); renderFixedCosts();
+}
+function deleteFixedCost(id){
+  if(!confirm('Delete this fixed cost?')) return;
+  data.fixedCosts = data.fixedCosts.filter(x=>x.id!==id); save(); toast('Fixed cost deleted'); renderFixedCosts();
+}
+
+// ── PRODUCTS (costing & break-even) ──────────────────────────────────────
+function renderProducts(){
+  $('page-title').textContent='Products';
+  $('page-sub').textContent=`${data.products.length} product${data.products.length!==1?'s':''}`;
+  $('top-action-btn').textContent='+ Product';
+  $('top-action-btn').classList.remove('hidden');
+  window._sheetMode='product';
+  $('page-content').innerHTML = data.products.length===0?`
+    <div class="empty"><div class="empty-icon">📦</div><p>No products yet.<br/>Tap + Product to add your first hoodie, tee, etc.</p></div>
+  `:data.products.map(p=>{
+    const c=calcProduct(p);
+    return`<div class="row-item" onclick="navigate('product-detail','${p.id}')" style="cursor:pointer;">
+      <div class="row-item-left">
+        <div class="row-item-name">${esc(p.name)||'Unnamed Product'}</div>
+        <div class="row-item-sub">${n(p.units)} units · ${fmt(n(p.price))} each</div>
+      </div>
+      <div class="row-item-right">
+        <div style="text-align:right;">
+          <div class="amount ${c.profit>=0?'green':'red'}">${fmt(c.profit)}</div>
+          <div style="font-size:11px;color:var(--muted)">${c.breakEven} to break even</div>
+        </div>
+        <span style="color:var(--muted)">›</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderProductDetail(){
+  const p = data.products.find(x=>x.id===routeExtra);
+  if(!p){navigate('products');return;}
+  $('page-title').textContent=p.name||'Product';
+  $('page-sub').textContent='Costing & break-even';
+  $('top-action-btn').classList.add('hidden');
+  const c=calcProduct(p);
+  const posted = p.costLogged||{};
+  const sales = data.income.filter(i=>i.productId===p.id).slice().sort((a,b)=>a.date<b.date?1:-1);
+
+  $('page-content').innerHTML = `
+    <button class="back-btn" onclick="navigate('products')">← Products</button>
+
+    <div class="stat-grid">
+      <div class="stat-card dark"><div class="stat-label">Net Profit</div><div class="stat-value">${fmt(c.profit)}</div><div class="stat-sub">${c.profit>=0?'Profitable':'In the red'}</div></div>
+      <div class="stat-card"><div class="stat-label">Revenue</div><div class="stat-value">${fmt(c.revenue)}</div><div class="stat-sub">${sales.length} sale${sales.length!==1?'s':''}</div></div>
+      <div class="stat-card"><div class="stat-label">Break-Even</div><div class="stat-value">${c.breakEven}</div><div class="stat-sub">units to sell</div></div>
+      <div class="stat-card"><div class="stat-label">Profit/Unit</div><div class="stat-value">${fmt(c.profitPerUnit)}</div><div class="stat-sub">after all costs</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Product Info</div>
+      <div class="field"><label class="field-label">Product Name</label>
+        <div class="input-wrap"><input type="text" value="${esc(p.name||'')}" placeholder="e.g. Heavyweight Hoodie" oninput="updateProd('${p.id}','name',this.value)"/></div></div>
+      <div class="field"><label class="field-label">Units Produced</label>
+        <div class="input-wrap"><input type="number" inputmode="decimal" value="${p.units||''}" placeholder="200" oninput="updateProd('${p.id}','units',this.value)"/></div></div>
+      <div class="field" style="margin-bottom:0"><label class="field-label">Selling Price Per Unit</label>
+        <div class="input-wrap"><input type="number" inputmode="decimal" value="${p.price||''}" placeholder="0.00" oninput="updateProd('${p.id}','price',this.value)"/><span class="input-suffix">€</span></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Production Costs</div>
+      <div class="field"><label class="field-label">Bulk Production</label>
+        <div class="input-wrap"><input type="number" inputmode="decimal" value="${p.bulkCost||''}" placeholder="5000" oninput="updateProd('${p.id}','bulkCost',this.value)"/><span class="input-suffix">€</span></div></div>
+      <div class="field" style="margin-bottom:0"><label class="field-label">Sample Cost</label>
+        <div class="input-wrap"><input type="number" inputmode="decimal" value="${p.sampleCost||''}" placeholder="400" oninput="updateProd('${p.id}','sampleCost',this.value)"/><span class="input-suffix">€</span></div></div>
+      <div class="divider"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:13px;color:var(--muted)">Production subtotal</span>
+        <span style="font-size:15px;font-weight:700;">${fmt(c.bulk+c.samp)}</span>
+      </div>
+      <div style="margin-top:10px;">
+        ${posted.production?`<button class="btn btn-outline btn-sm" style="width:100%;" onclick="unlogProductCost('${p.id}','production')">✓ Logged as an expense — tap to remove</button>`
+          :`<button class="btn btn-outline btn-sm" style="width:100%;" onclick="logProductionCost('${p.id}')">Log as an expense</button>`}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Marketing Costs</div>
+      <div class="field"><label class="field-label">Paid Ads (Meta / TikTok / Google)</label>
+        <div class="input-wrap"><input type="number" inputmode="decimal" value="${p.mktAds||''}" placeholder="0.00" oninput="updateProd('${p.id}','mktAds',this.value)"/><span class="input-suffix">€</span></div></div>
+      <div class="field"><label class="field-label">Influencer / Gifting</label>
+        <div class="input-wrap"><input type="number" inputmode="decimal" value="${p.mktInfluencer||''}" placeholder="0.00" oninput="updateProd('${p.id}','mktInfluencer',this.value)"/><span class="input-suffix">€</span></div></div>
+      <div class="field"><label class="field-label">Content Creation</label>
+        <div class="input-wrap"><input type="number" inputmode="decimal" value="${p.mktContent||''}" placeholder="0.00" oninput="updateProd('${p.id}','mktContent',this.value)"/><span class="input-suffix">€</span></div></div>
+      <div class="field" style="margin-bottom:0"><label class="field-label">Market Stall / Event Fees</label>
+        <div class="input-wrap"><input type="number" inputmode="decimal" value="${p.mktStall||''}" placeholder="0.00" oninput="updateProd('${p.id}','mktStall',this.value)"/><span class="input-suffix">€</span></div></div>
+      <div class="divider"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:13px;color:var(--muted)">Marketing subtotal</span>
+        <span style="font-size:15px;font-weight:700;">${fmt(c.mkt)}</span>
+      </div>
+      <div style="margin-top:10px;">
+        ${posted.marketing?`<button class="btn btn-outline btn-sm" style="width:100%;" onclick="unlogProductCost('${p.id}','marketing')">✓ Logged as an expense — tap to remove</button>`
+          :`<button class="btn btn-outline btn-sm" style="width:100%;" onclick="logMarketingCost('${p.id}')">Log as an expense</button>`}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-head">
+        <div class="card-title" style="margin-bottom:0">Sales Log</div>
+        <button class="btn btn-dark btn-sm" onclick="openAddSale('${p.id}')">+ Add Sale</button>
+      </div>
+      <div style="margin-top:12px;">
+        ${sales.length===0?`<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px;">No sales yet</div>`
+        :sales.map(s=>`
+          <div class="sale-row">
+            <div>
+              <div class="amount green">${fmt(s.amount)}</div>
+              <div style="font-size:12px;color:var(--muted)">${s.units?(s.units+' unit'+(s.units!=1?'s':'')+(s.description?' · ':'')):''}${esc(s.description)||''}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:12px;color:var(--muted)">${fmtDateShort(s.date)}</span>
+              <button class="del-btn" onclick="deleteEntry('income','${s.id}')">✕</button>
+            </div>
+          </div>`).join('')}
+        ${sales.length>0?`<div class="divider"></div>
+        <div style="display:flex;justify-content:space-between;">
+          <span style="font-size:13px;color:var(--muted)">Total revenue</span>
+          <span style="font-size:15px;font-weight:700;color:var(--green)">${fmt(c.revenue)}</span>
+        </div>`:''}
+      </div>
+    </div>
+
+    <button class="btn btn-red" onclick="deleteProduct('${p.id}')">Delete Product</button>
+  `;
+}
+
+function openAddProduct(){
+  $('sheet-content').innerHTML = `
+    <div class="sheet-title">New Product</div>
+    <div class="field"><label class="field-label">Product Name</label><div class="input-wrap"><input id="s-name" type="text" placeholder="e.g. Heavyweight Hoodie"/></div></div>
+    <div class="field"><label class="field-label">Units Produced</label><div class="input-wrap"><input id="s-units" type="number" inputmode="decimal" placeholder="200"/></div></div>
+    <div class="field"><label class="field-label">Selling Price Per Unit</label><div class="input-wrap"><input id="s-price" type="number" inputmode="decimal" placeholder="0.00"/><span class="input-suffix">€</span></div></div>
+    <div class="field"><label class="field-label">Bulk Production Cost</label><div class="input-wrap"><input id="s-bulk" type="number" inputmode="decimal" placeholder="5000"/><span class="input-suffix">€</span></div></div>
+    <div class="field"><label class="field-label">Sample Cost</label><div class="input-wrap"><input id="s-samp" type="number" inputmode="decimal" placeholder="400"/><span class="input-suffix">€</span></div></div>
+    <button class="btn btn-dark" style="margin-top:6px;" onclick="saveNewProduct()">Save Product</button>
+  `;
+  showSheet();
+}
+function saveNewProduct(){
+  const p = {
+    id:uid(), name:$('s-name').value, units:$('s-units').value, price:$('s-price').value,
+    bulkCost:$('s-bulk').value, sampleCost:$('s-samp').value,
+    mktAds:'',mktInfluencer:'',mktContent:'',mktStall:'', costLogged:{}
+  };
+  data.products.push(p); save(); closeSheet(); toast('Product added'); navigate('product-detail', p.id);
+}
+function updateProd(id, field, value){
+  const p = data.products.find(x=>x.id===id); if(!p) return;
+  p[field]=value; save();
+  clearTimeout(window._prodRenderTimer);
+  window._prodRenderTimer = setTimeout(()=>{ if(routeExtra===id) renderProductDetail(); },600);
+}
+function deleteProduct(id){
+  if(!confirm('Delete this product? Any income already logged for it will be kept but unlinked.')) return;
+  data.income.forEach(i=>{ if(i.productId===id) i.productId=null; });
+  data.products = data.products.filter(x=>x.id!==id);
+  save(); toast('Product deleted'); navigate('products');
+}
+function openAddSale(pid){
+  openAddEntry('income');
+  if($('e-product')){ $('e-product').value = pid; toggleUnitsField(); }
+}
+function logProductionCost(pid){
+  const p = data.products.find(x=>x.id===pid); if(!p) return;
+  const amt = n(p.bulkCost)+n(p.sampleCost);
+  if(amt<=0){ alert('Enter bulk/sample cost first'); return; }
+  p.costLogged = p.costLogged||{};
+  if(p.costLogged.production){ alert('Already logged. Remove it first to re-log.'); return; }
+  const id = uid();
+  data.expenses.push({id, date:isoToday(), amount:amt, description:(p.name||'Product')+' — production costs', category:'Bulk Production', dropId:null, dropCategory:null, fileId:null, ts:Date.now()});
+  p.costLogged.production = id;
+  save(); toast('Logged as an expense'); navigate('product-detail', pid);
+}
+function logMarketingCost(pid){
+  const p = data.products.find(x=>x.id===pid); if(!p) return;
+  const c = calcProduct(p);
+  if(c.mkt<=0){ alert('Enter marketing costs first'); return; }
+  p.costLogged = p.costLogged||{};
+  if(p.costLogged.marketing){ alert('Already logged. Remove it first to re-log.'); return; }
+  const id = uid();
+  data.expenses.push({id, date:isoToday(), amount:c.mkt, description:(p.name||'Product')+' — marketing costs', category:'Marketing & Ads', dropId:null, dropCategory:null, fileId:null, ts:Date.now()});
+  p.costLogged.marketing = id;
+  save(); toast('Logged as an expense'); navigate('product-detail', pid);
+}
+function unlogProductCost(pid, kind){
+  const p = data.products.find(x=>x.id===pid); if(!p||!p.costLogged) return;
+  const id = p.costLogged[kind];
+  data.expenses = data.expenses.filter(e=>e.id!==id);
+  p.costLogged[kind]=null; save(); toast('Removed from expenses'); navigate('product-detail', pid);
+}
+
+// ── DROPS & BUDGETS ───────────────────────────────────────────────────────
+function renderDrops(){
+  $('page-title').textContent='Drops & Budgets';
+  $('page-sub').textContent='Plan and track pop-ups, launches & drops';
+  $('top-action-btn').textContent='+ Drop';
+  $('top-action-btn').classList.remove('hidden');
+  window._sheetMode='drop';
+  $('page-content').innerHTML = data.drops.length===0?`<div class="empty"><div class="empty-icon">🚀</div><p>No drops yet.<br/>Tap + Drop to budget your next pop-up, sold-out drop, or launch.</p></div>`
+  : data.drops.slice().sort((a,b)=>(b.ts||0)-(a.ts||0)).map(d=>{
+    const planned = (d.budgetLines||[]).reduce((s,l)=>s+n(l.planned),0);
+    const actual = data.expenses.filter(e=>e.dropId===d.id).reduce((s,e)=>s+n(e.amount),0);
+    const revenue = data.income.filter(i=>i.dropId===d.id).reduce((s,i)=>s+n(i.amount),0);
+    return `<div class="row-item" style="cursor:pointer;" onclick="navigate('drop-detail','${d.id}')">
+      <div class="row-item-left">
+        <div class="row-item-name">${esc(d.name)}</div>
+        <div class="row-item-sub">${fmtDate(d.date)} · Budget ${fmt(planned)}</div>
+      </div>
+      <div class="row-item-right">
+        <div style="text-align:right;">
+          <div class="amount ${actual>planned?'red':'green'}">${fmt(actual)} spent</div>
+          <div style="font-size:11px;color:var(--muted)">${fmt(revenue)} revenue</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderDropDetail(){
+  const d = data.drops.find(x=>x.id===routeExtra);
+  if(!d){ navigate('drops'); return; }
+  $('page-title').textContent=d.name;
+  $('page-sub').textContent=fmtDate(d.date);
+  $('top-action-btn').classList.add('hidden');
+  const lines = d.budgetLines||[];
+  const expenses = data.expenses.filter(e=>e.dropId===d.id);
+  const income = data.income.filter(i=>i.dropId===d.id);
+  const totalPlanned = lines.reduce((s,l)=>s+n(l.planned),0);
+  const totalActual = expenses.reduce((s,e)=>s+n(e.amount),0);
+  const totalRevenue = income.reduce((s,i)=>s+n(i.amount),0);
+  const netResult = totalRevenue-totalActual;
+  const linked = [...expenses.map(e=>Object.assign({},e,{_type:'expense'})), ...income.map(i=>Object.assign({},i,{_type:'income'}))].sort((a,b)=>a.date<b.date?1:-1);
+
+  $('page-content').innerHTML = `
+    <button class="back-btn" onclick="navigate('drops')">← Drops</button>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-label">Budgeted</div><div class="stat-value">${fmt(totalPlanned)}</div></div>
+      <div class="stat-card ${totalActual>totalPlanned?'red':'green'}"><div class="stat-label">Actual Spend</div><div class="stat-value">${fmt(totalActual)}</div></div>
+      <div class="stat-card"><div class="stat-label">Revenue</div><div class="stat-value">${fmt(totalRevenue)}</div></div>
+      <div class="stat-card ${netResult>=0?'green':'red'}"><div class="stat-label">Net Result</div><div class="stat-value">${fmt(netResult)}</div></div>
+    </div>
+    <div class="card">
+      <div class="section-head"><div class="card-title" style="margin-bottom:0;">Budget Lines</div><button class="btn btn-outline btn-sm" onclick="openAddBudgetLine('${d.id}')">+ Line</button></div>
+      ${lines.length===0?`<div style="text-align:center;padding:16px;color:var(--muted);font-size:13px;">No budget lines yet</div>`
+      : lines.map(l=>{
+        const actual = expenses.filter(e=>e.dropCategory===l.category).reduce((s,e)=>s+n(e.amount),0);
+        const pct = n(l.planned)>0?Math.min(100,actual/n(l.planned)*100):0;
+        const over = actual>n(l.planned);
+        const color = pct<70?'var(--green)':pct<90?'var(--amber)':'var(--red)';
+        return `<div style="margin-bottom:14px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;align-items:center;">
+            <span style="font-size:13px;font-weight:600;">${esc(l.category)}</span>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:12px;color:${over?'var(--red)':'var(--muted)'};">${fmt(actual)} / ${fmt(l.planned)}</span>
+              <button class="del-btn" style="min-width:24px;min-height:24px;font-size:14px;" onclick="deleteBudgetLine('${d.id}','${l.id}')">✕</button>
+            </div>
+          </div>
+          <div class="progress-wrap"><div class="progress-bar" style="width:${pct}%;background:${color};"></div></div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="card">
+      <div class="card-title">Linked Income &amp; Expenses</div>
+      ${linked.length===0?`<div style="text-align:center;padding:16px;color:var(--muted);font-size:13px;">Nothing linked yet — choose this drop when logging an entry in Income &amp; Expenses.</div>`
+      :linked.map(x=>`
+        <div class="sale-row"><div><div style="font-size:14px;font-weight:600;">${esc(x.description)||esc(x.category)}</div><div style="font-size:12px;color:var(--muted)">${fmtDate(x.date)}</div></div><span class="amount ${x._type==='income'?'green':'red'}">${x._type==='expense'?'-':'+'}${fmt(x.amount)}</span></div>
+      `).join('')}
+    </div>
+    <button class="btn btn-red" onclick="deleteDrop('${d.id}')">Delete Drop</button>
+  `;
+}
+
+function openAddDrop(){
+  $('sheet-content').innerHTML = `
+    <div class="sheet-title">New Drop</div>
+    <div class="field"><label class="field-label">Name</label><div class="input-wrap"><input id="d-name" type="text" placeholder="e.g. Fall Hoodie Drop"/></div></div>
+    <div class="field" style="margin-bottom:0"><label class="field-label">Date</label><div class="input-wrap"><input type="date" id="d-date" value="${isoToday()}"/></div></div>
+    <button class="btn btn-dark" style="margin-top:14px;" onclick="saveNewDrop()">Create Drop</button>
+  `;
+  showSheet();
+}
+function saveNewDrop(){
+  const name = $('d-name').value; if(!name){ alert('Name is required'); return; }
+  const d = {id:uid(), name, date:$('d-date').value||isoToday(), budgetLines: DROP_BUDGET_CATS.map(c=>({id:uid(), category:c, planned:''})), ts:Date.now()};
+  data.drops.push(d); save(); closeSheet(); toast('Drop created'); navigate('drop-detail', d.id);
+}
+function openAddBudgetLine(dropId){
+  $('sheet-content').innerHTML = `
+    <div class="sheet-title">Add Budget Line</div>
+    <div class="field"><label class="field-label">Category</label>
+      <div class="input-wrap"><input id="bl-cat" type="text" list="bl-cats" placeholder="e.g. Bulk Production"/></div>
+    </div>
+    <datalist id="bl-cats">${DROP_BUDGET_CATS.map(c=>`<option value="${c}">`).join('')}</datalist>
+    <div class="field" style="margin-bottom:0"><label class="field-label">Planned Amount</label><div class="input-wrap"><input id="bl-amt" type="number" placeholder="0.00"/><span class="input-suffix">€</span></div></div>
+    <button class="btn btn-dark" style="margin-top:14px;" onclick="saveBudgetLine('${dropId}')">Add Line</button>
+  `;
+  showSheet();
+}
+function saveBudgetLine(dropId){
+  const d = data.drops.find(x=>x.id===dropId); if(!d) return;
+  const cat = $('bl-cat').value; if(!cat){ alert('Enter a category'); return; }
+  d.budgetLines = d.budgetLines||[];
+  d.budgetLines.push({id:uid(), category:cat, planned:$('bl-amt').value});
+  save(); closeSheet(); toast('Budget line added'); navigate('drop-detail', dropId);
+}
+function deleteBudgetLine(dropId, lineId){
+  const d = data.drops.find(x=>x.id===dropId); if(!d) return;
+  d.budgetLines = (d.budgetLines||[]).filter(l=>l.id!==lineId);
+  save(); toast('Budget line removed'); navigate('drop-detail', dropId);
+}
+function deleteDrop(id){
+  if(!confirm('Delete this drop? Linked income/expenses will be kept but unlinked.')) return;
+  data.income.forEach(i=>{ if(i.dropId===id) i.dropId=null; });
+  data.expenses.forEach(e=>{ if(e.dropId===id){ e.dropId=null; e.dropCategory=null; } });
+  data.drops = data.drops.filter(x=>x.id!==id);
+  save(); toast('Drop deleted'); navigate('drops');
+}
+
+// ── MONTHLY REPORT ────────────────────────────────────────────────────────
+function renderReport(){
+  $('page-title').textContent='Monthly Report';
+  $('page-sub').textContent='See exactly how the month went';
+  $('top-action-btn').classList.add('hidden');
+  window._reportMonth = window._reportMonth || isoToday().slice(0,7);
+  const mt = window._reportMonth;
+  const t = monthTotals(mt);
+
+  const salesByProduct = {};
+  t.inc.forEach(i=>{
+    if(!i.productId) return;
+    salesByProduct[i.productId] = salesByProduct[i.productId] || {units:0, revenue:0};
+    salesByProduct[i.productId].units += n(i.units);
+    salesByProduct[i.productId].revenue += n(i.amount);
+  });
+  const productRows = Object.keys(salesByProduct).map(pid=>{
+    const product = data.products.find(p=>p.id===pid);
+    return product ? Object.assign({product}, salesByProduct[pid]) : null;
+  }).filter(Boolean).sort((a,b)=>b.revenue-a.revenue);
+  const totalUnits = productRows.reduce((s,r)=>s+r.units,0);
+  const bestSeller = productRows[0];
+
+  const expByCat = {};
+  t.exp.forEach(e=>{ const c=e.category||'Other'; expByCat[c]=(expByCat[c]||0)+n(e.amount); });
+  if(t.fixed>0) expByCat['Fixed Costs'] = (expByCat['Fixed Costs']||0)+t.fixed;
+  const expRows = Object.entries(expByCat).map(([cat,amt])=>({cat,amt})).sort((a,b)=>b.amt-a.amt);
+
+  const allEntries = [...t.inc.map(i=>Object.assign({},i,{_type:'income'})), ...t.exp.map(e=>Object.assign({},e,{_type:'expense'}))].sort((a,b)=>a.date<b.date?1:-1);
+
+  $('page-content').innerHTML = `
+    <div class="filter-bar"><input type="month" value="${mt}" onchange="setReportMonth(this.value)"/></div>
+    <div style="text-align:center;margin-bottom:16px;"><span style="font-family:var(--serif);font-size:20px;font-weight:700;">${monthLabel(mt)}</span></div>
+    <div class="stat-grid">
+      <div class="stat-card green"><div class="stat-label">Income</div><div class="stat-value">${fmt(t.totalIncome)}</div></div>
+      <div class="stat-card red"><div class="stat-label">Expenses</div><div class="stat-value">${fmt(t.totalExpenses)}</div></div>
+      <div class="stat-card ${t.net>=0?'green':'red'}" style="grid-column:span 2;"><div class="stat-label">${t.net>=0?'Profit':'Loss'}</div><div class="stat-value">${fmt(t.net)}</div><div class="stat-sub">${t.net>=0?'You made a profit this month 🎉':'You made a loss this month'}</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Products Sold</div>
+      ${productRows.length===0?`<div style="text-align:center;padding:12px;color:var(--muted);font-size:13px;">No product sales linked this month</div>`:`
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+        <span style="font-size:13px;color:var(--muted);">Total pieces sold</span><span style="font-weight:700;">${totalUnits}</span>
+      </div>
+      ${bestSeller?`<div style="font-size:13px;color:var(--muted);margin-bottom:10px;">Best seller: <b style="color:var(--text)">${esc(bestSeller.product.name)}</b> (${bestSeller.units} sold, ${fmt(bestSeller.revenue)})</div>`:''}
+      ${productRows.map(r=>`<div class="sale-row"><div><div style="font-size:14px;font-weight:600;">${esc(r.product.name)}</div><div style="font-size:12px;color:var(--muted)">${r.units} units</div></div><span class="amount green">${fmt(r.revenue)}</span></div>`).join('')}
+      `}
+    </div>
+
+    <div class="card">
+      <div class="card-title">Where the Money Went</div>
+      ${expRows.length===0?`<div style="text-align:center;padding:12px;color:var(--muted);font-size:13px;">No expenses this month</div>`
+      :expRows.map(r=>`
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:14px;"><span>${esc(r.cat)}</span><span style="font-weight:600;">${fmt(r.amt)}</span></div>
+        <div class="progress-wrap" style="margin-bottom:12px;"><div class="progress-bar" style="width:${t.totalExpenses>0?r.amt/t.totalExpenses*100:0}%;background:var(--dark);"></div></div>
+      `).join('')}
+    </div>
+
+    <div class="card">
+      <div class="section-head"><div class="card-title" style="margin-bottom:0;">All Entries This Month</div><button class="btn btn-outline btn-sm" onclick="viewMonthInLog('${mt}')">View in log</button></div>
+      ${allEntries.length===0?`<div style="text-align:center;padding:16px;color:var(--muted);font-size:13px;">Nothing logged this month yet</div>`
+      :allEntries.map(x=>`
+        <div class="sale-row">
+          <div><div style="font-size:14px;font-weight:600;">${esc(x.description)||esc(x.category)}</div><div style="font-size:12px;color:var(--muted)">${fmtDate(x.date)} · ${esc(x.category)||''}</div></div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            ${x.fileId?`<button class="del-btn" style="color:var(--text)" onclick="viewFile('${x.fileId}')">📎</button>`:''}
+            <span class="amount ${x._type==='income'?'green':'red'}">${x._type==='expense'?'-':'+'}${fmt(x.amount)}</span>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+function setReportMonth(v){ window._reportMonth=v; renderReport(); }
+function viewMonthInLog(mt){
+  window._entryFilter = {q:'', month:mt};
+  navigate('entries');
+}
+
+// ── FILES ─────────────────────────────────────────────────────────────────
+function linkedLabel(f){
+  if(f.linkedType==='income'){ const i=data.income.find(x=>x.id===f.linkedId); return i?('linked to "'+(i.description||i.category||'income')+'"'):''; }
+  if(f.linkedType==='expense'){ const e=data.expenses.find(x=>x.id===f.linkedId); return e?('linked to "'+(e.description||e.category||'expense')+'"'):''; }
+  return '';
+}
+function renderFiles(){
+  $('page-title').textContent='Files';
+  $('page-sub').textContent='Receipts & documents, organized by month';
+  $('top-action-btn').textContent='+ Upload';
+  $('top-action-btn').classList.remove('hidden');
+  window._sheetMode='file';
+  window._filesMonth = window._filesMonth===undefined ? '' : window._filesMonth;
+  const content = $('page-content');
+  content.innerHTML = `<div class="empty"><div class="empty-icon">⏳</div><p>Loading files…</p></div>`;
+  dbGetAllFiles().then(files=>{
+    if(currentView!=='files') return;
+    let list = files;
+    if(window._filesMonth) list = list.filter(f=>(f.dateIso||'').slice(0,7)===window._filesMonth);
+    list.sort((a,b)=>(b.ts||0)-(a.ts||0));
+    const filterBar = `<div class="filter-bar"><input type="month" value="${window._filesMonth}" onchange="setFilesMonth(this.value)"/></div>`;
+    content.innerHTML = filterBar + (list.length===0?`
+      <div class="empty"><div class="empty-icon">📎</div><p>No files yet.<br/>Tap + Upload to add receipts, invoices, or any document.</p></div>
+    `:list.map(f=>{
+      const icon = f.type && f.type.indexOf('image/')===0 ? '🖼️' : (f.type==='application/pdf' ? '📄' : '📎');
+      const link = linkedLabel(f);
+      return `<div class="row-item">
+        <div class="row-item-left" style="cursor:pointer;" onclick="viewFile('${f.id}')">
+          <div class="row-item-name">${icon} ${esc(f.name)}</div>
+          <div class="row-item-sub">${fmtSize(f.size)} · ${f.date}${link?(' · '+link):''}${f.note?(' · '+esc(f.note)):''}</div>
+        </div>
+        <div class="row-item-right"><button class="del-btn" onclick="deleteFile('${f.id}')">✕</button></div>
+      </div>`;
+    }).join(''));
+  }).catch(err=>{
+    if(currentView!=='files') return;
+    content.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><p>Couldn't open file storage in this browser.<br/>${esc((err&&err.message)||'')}</p></div>`;
+  });
+}
+function setFilesMonth(v){ window._filesMonth=v; renderFiles(); }
+function openAddFile(){
+  $('sheet-content').innerHTML = `
+    <div class="sheet-title">Upload File</div>
+    <div class="field"><label class="field-label">Choose File</label><div class="input-wrap"><input id="s-file" type="file"/></div></div>
+    <div class="field"><label class="field-label">Name (optional)</label><div class="input-wrap"><input id="s-fname" type="text" placeholder="e.g. Supplier Invoice #204"/></div></div>
+    <div class="field" style="margin-bottom:0"><label class="field-label">Note (optional)</label><div class="input-wrap"><input id="s-fnote" type="text" placeholder="Any details..."/></div></div>
+    <button class="btn btn-dark" style="margin-top:14px;" onclick="saveNewFile()">Upload</button>
+  `;
+  showSheet();
+}
+function saveNewFile(){
+  const input = $('s-file'); const f = input && input.files[0];
+  if(!f){ alert('Choose a file first'); return; }
+  const rec = {id:uid(), name:$('s-fname').value||f.name, note:$('s-fnote').value, size:f.size, type:f.type, date:today(), dateIso:isoToday(), ts:Date.now(), linkedType:null, linkedId:null, blob:f};
+  dbPutFile(rec).then(()=>{ closeSheet(); toast('File saved'); renderFiles(); }).catch(e=>alert('Could not save file: '+e.message));
+}
+function viewFile(id){
+  dbGetFile(id).then(rec=>{
+    if(!rec){ alert('File not found'); return; }
+    const url = URL.createObjectURL(rec.blob);
+    window.open(url, '_blank');
+  }).catch(()=>alert('Could not open file'));
+}
+function deleteFile(id){
+  if(!confirm('Delete this file?')) return;
+  dbDeleteFile(id).catch(()=>{}).then(()=>{ toast('File deleted'); renderFiles(); });
+}
+
+// ── AUSTRIA / VIENNA TAX GUIDE ───────────────────────────────────────────
+function renderTaxGuide(){
+  $('page-title').textContent='Austria Tax Guide';
+  $('page-sub').textContent='Plain-language basics for a small business in Vienna';
+  $('top-action-btn').classList.add('hidden');
+  $('page-content').innerHTML = `
+    <div class="callout"><b>This is general education, not tax advice.</b> Thresholds and rates below are the 2026 figures and are adjusted almost every year. Always confirm your specific situation with the <b>WKO Gründerservice</b> (wko.at) or a <b>Steuerberater</b> (tax advisor) before making decisions.</div>
+
+    <div class="card doc-section">
+      <h3>The Big Picture</h3>
+      <p>Running a small clothing brand in Austria, you generally deal with up to three separate things: <b>Umsatzsteuer</b> (VAT, on sales), <b>Einkommensteuer</b> (income tax, on your profit), and <b>Sozialversicherung / SVS</b> (social insurance for the self-employed). Whether each one applies — and how much it costs — depends mostly on how much you earn.</p>
+    </div>
+
+    <div class="card doc-section">
+      <h3>1. Kleinunternehmerregelung — the small business VAT exemption</h3>
+      <p>If your <b>yearly revenue stays under €55,000</b> (2026), you can register as a "Kleinunternehmer." That means:</p>
+      <ul>
+        <li>You don't charge VAT (Umsatzsteuer) on what you sell, and don't file VAT returns.</li>
+        <li>In exchange, you also can't reclaim VAT (Vorsteuer) on what you buy for the business.</li>
+        <li>There's a 10% buffer — going up to €60,500 in one year doesn't lose you the exemption for that year, but you can't use it again the following year.</li>
+      </ul>
+      <p>Most brand-new, small clothing brands start out as Kleinunternehmer — it's simpler, but only worth it if you're not buying huge amounts of VAT-heavy stock (fabric, printing, bulk production) that you'd otherwise reclaim VAT on.</p>
+    </div>
+
+    <div class="card doc-section">
+      <h3>2. Umsatzsteuer (VAT) — once you're over the threshold</h3>
+      <p>Once your revenue crosses €55,000, you generally must charge <b>20% VAT</b> (the standard Austrian rate — clothing isn't reduced-rate) on your sales, file regular VAT returns, and pay the difference between VAT collected and VAT you paid on business purchases to the tax office.</p>
+    </div>
+
+    <div class="card doc-section">
+      <h3>3. Einkommensteuer (Income Tax) — on your profit, not your revenue</h3>
+      <p>This is calculated on what's <b>left after expenses</b> (income − expenses), once a year. Austria's system is progressive — you only pay the higher rate on the slice of profit inside that bracket, not your whole profit. 2026 brackets:</p>
+      <ul>
+        <li>Up to €13,539 — <b>0%</b> (tax-free)</li>
+        <li>€13,539 – €21,992 — <b>20%</b></li>
+        <li>€21,992 – €36,458 — <b>30%</b></li>
+        <li>€36,458 – €70,365 — <b>40%</b></li>
+        <li>€70,365 – €104,859 — <b>48%</b></li>
+        <li>€104,859 – €1,000,000 — <b>50%</b></li>
+        <li>above €1,000,000 — <b>55%</b></li>
+      </ul>
+      <p>Filed via your annual Steuererklärung (roughly due end of April on paper / end of June via FinanzOnline — a Steuerberater can usually get you an extension).</p>
+    </div>
+
+    <div class="card doc-section">
+      <h3>4. Sozialversicherung (SVS) — often the cost people forget</h3>
+      <p>As a self-employed person you pay your own health, pension and accident insurance through the <b>SVS</b>. If your yearly profit stays <b>under €6,613.20</b> (2026), you're generally exempt from mandatory SVS contributions — you only owe a small flat accident-insurance fee (€155.40/year). Above that threshold, SVS becomes mandatory and typically runs <b>around a quarter of your profit</b> — this is the number that catches most new small-business owners off guard, so budget for it.</p>
+    </div>
+
+    <div class="card doc-section">
+      <h3>5. Do you need a Gewerbeschein?</h3>
+      <p>Selling clothing as a business — even online or at pop-ups — generally counts as a "Handelsgewerbe" (trade) in Austria and needs a trade license (Gewerbeschein) registered with your local Bezirkshauptmannschaft / the WKO. This is separate from — and usually a prerequisite to — your tax registration.</p>
+    </div>
+
+    <div class="card doc-section">
+      <h3>6. Keep every receipt (Belege)</h3>
+      <p>Austrian law requires you to keep business receipts and invoices for <b>7 years</b> (Aufbewahrungspflicht). This is exactly what the <b>Files</b> tab in this app is for — attach every receipt to its expense as you go, so you're never scrambling to find one later.</p>
+    </div>
+
+    <div class="callout info">
+      <b>Rough rule of thumb:</b><br/>
+      Under ~€6,600 profit/year → basically no income tax, no mandatory SVS.<br/>
+      €6,600–€55,000 revenue → SVS becomes mandatory (~25% of profit), income tax kicks in above €13,539 profit, still VAT-free if you stay a Kleinunternehmer.<br/>
+      Above €55,000 revenue → VAT (20%) applies too, on top of full income tax and SVS.
+    </div>
+    <div class="callout">Figures sourced from FreeFinance, GCT, facturo, getaccounted, kalkuel, Geroldinger, Raisin, USP.gv.at, finanz.at, Arbeiterkammer, and SVS.at (2026 values). Verify current numbers at <b>wko.at</b>, <b>usp.gv.at</b>, or <b>svs.at</b> before relying on them.</div>
+  `;
+}
+
+// ── SETTINGS ──────────────────────────────────────────────────────────────
+function renderSettings(){
+  $('page-title').textContent='Settings';
+  $('page-sub').textContent='Business info & backups';
+  $('top-action-btn').classList.add('hidden');
+  $('page-content').innerHTML = `
+    <div class="card">
+      <div class="card-title">Business Info</div>
+      <div class="field" style="margin-bottom:0"><label class="field-label">Business Name</label><div class="input-wrap"><input id="set-name" type="text" value="${esc(data.meta.businessName||'')}" oninput="updateMeta('businessName',this.value)"/></div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Backup Your Data</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-outline btn-sm" style="flex:1;" onclick="exportData()">⬇ Export backup</button>
+        <button class="btn btn-outline btn-sm" style="flex:1;" onclick="$('import-file-input').click()">⬆ Import backup</button>
+      </div>
+      <input type="file" id="import-file-input" accept="application/json,.json" style="display:none" onchange="importData(this.files[0])"/>
+      <div style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.5;">Everything auto-saves on this device as you go. Export a backup regularly, or before switching devices/browsers. Uploaded files live in the Files tab and stay on this device.</div>
+    </div>
+    <div class="danger-zone">
+      <div style="font-weight:700;font-size:13px;color:var(--red);margin-bottom:8px;">Danger Zone</div>
+      <div style="font-size:12px;color:var(--red);margin-bottom:12px;">Permanently erase all bookkeeping data on this device. This cannot be undone.</div>
+      <button class="btn btn-red" onclick="eraseAllData()">Erase All Data</button>
+    </div>
+  `;
+}
+function updateMeta(field,val){ data.meta[field]=val; save(); }
+function eraseAllData(){
+  const sure = prompt('Type DELETE to permanently erase all data on this device:');
+  if(sure!=='DELETE') return;
+  data = defaultData();
+  save();
+  dbGetAllFiles().then(files=>Promise.all(files.map(f=>dbDeleteFile(f.id)))).catch(()=>{});
+  toast('All data erased');
+  navigate('dashboard');
+}
+function exportData(){
+  const payload = Object.assign({}, data, {exportedAt:new Date().toISOString(), version:5});
+  const blob = new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download='brand-monetizer-backup-'+isoToday()+'.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),2000);
+  toast('Backup downloaded');
+}
+function importData(file){
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const d = JSON.parse(reader.result);
+      if(d.income || d.expenses){
+        if(!confirm('Import will replace ALL current data on this device. Continue?')) return;
+        data = {
+          meta: d.meta || defaultData().meta,
+          income: Array.isArray(d.income)?d.income:[],
+          expenses: Array.isArray(d.expenses)?d.expenses:[],
+          fixedCosts: Array.isArray(d.fixedCosts)?d.fixedCosts:[],
+          products: Array.isArray(d.products)?d.products:[],
+          drops: Array.isArray(d.drops)?d.drops:[]
+        };
+        save(); toast('Data imported'); navigate('dashboard');
+      } else if(d.entries){
+        if(!confirm('This looks like an older backup. Import and convert it? This replaces all current data on this device.')) return;
+        migrateFromV4(d); toast('Older backup imported and converted'); navigate('dashboard');
+      } else if(d.products){
+        if(!confirm('This looks like an older backup. Import and convert it? This replaces all current data on this device.')) return;
+        migrateFromV3(d); toast('Older backup imported and converted'); navigate('dashboard');
+      } else {
+        alert("This file doesn't look like a Brand Monetizer backup.");
+      }
+    }catch(e){ alert('That file could not be read as a backup.'); }
+  };
+  reader.readAsText(file);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+load();
+buildSidebar();
+navigate('dashboard');
+if(window._migrated) setTimeout(()=>toast('Imported your previous data'), 400);
+</script>
+</body>
+</html>
+

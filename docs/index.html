@@ -1089,16 +1089,26 @@ function setRoundVerdict(sampleId, roundId, v){
   window._roundVerdict = v;
   const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
   const existing = roundId ? (s.rounds||[]).find(r=>r.id===roundId) : null;
-  renderRoundSheet(sampleId, roundId, existing);
+  const draft = {
+    orderDate: $('rd-order') ? $('rd-order').value : '',
+    sampleDate: $('rd-recv') ? $('rd-recv').value : '',
+    cost: $('rd-cost') ? $('rd-cost').value : '',
+    notes: $('rd-notes') ? $('rd-notes').value : ''
+  };
+  renderRoundSheet(sampleId, roundId, existing, draft);
 }
-function renderRoundSheet(sampleId, roundId, existing){
+function renderRoundSheet(sampleId, roundId, existing, draft){
   const v = window._roundVerdict||'pending';
+  const orderDate = draft ? draft.orderDate : ((existing&&existing.orderDate)||isoToday());
+  const sampleDate = draft ? draft.sampleDate : ((existing&&existing.sampleDate)||'');
+  const cost = draft ? draft.cost : ((existing&&existing.cost)||'');
+  const notes = draft ? draft.notes : ((existing&&existing.notes)||'');
   $('sheet-content').innerHTML = `
     <div class="sheet-title">${existing?'Edit':'New'} Sample Round</div>
     <div class="field"><label class="field-label">Order Date</label>
-      <div class="input-wrap"><input id="rd-order" type="date" value="${(existing&&existing.orderDate)||isoToday()}"/></div></div>
+      <div class="input-wrap"><input id="rd-order" type="date" value="${orderDate}"/></div></div>
     <div class="field"><label class="field-label">Sample Received</label>
-      <div class="input-wrap"><input id="rd-recv" type="date" value="${(existing&&existing.sampleDate)||''}"/></div></div>
+      <div class="input-wrap"><input id="rd-recv" type="date" value="${sampleDate}"/></div></div>
     <div class="field"><label class="field-label">Verdict — Was It Good?</label>
       <div class="type-tabs">
         <button class="type-tab ${v==='good'?'active':''}" onclick="setRoundVerdict('${sampleId}','${roundId||''}','good')">Good</button>
@@ -1107,9 +1117,9 @@ function renderRoundSheet(sampleId, roundId, existing){
       </div>
     </div>
     <div class="field"><label class="field-label">Cost</label>
-      <div class="input-wrap"><input id="rd-cost" type="number" inputmode="decimal" value="${(existing&&existing.cost)||''}" placeholder="0.00"/><span class="input-suffix">€</span></div></div>
+      <div class="input-wrap"><input id="rd-cost" type="number" inputmode="decimal" value="${cost}" placeholder="0.00"/><span class="input-suffix">€</span></div></div>
     <div class="field" style="margin-bottom:0"><label class="field-label">Notes</label>
-      <div class="input-wrap"><input id="rd-notes" type="text" value="${esc((existing&&existing.notes)||'')}" placeholder="e.g. fabric was off, fit good..."/></div></div>
+      <div class="input-wrap"><input id="rd-notes" type="text" value="${esc(notes)}" placeholder="e.g. fabric was off, fit good..."/></div></div>
     <button class="btn btn-dark" style="margin-top:14px;" onclick="saveRound('${sampleId}','${roundId||''}')">${existing?'Save Changes':'Add Round'}</button>
   `;
 }

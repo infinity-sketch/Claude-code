@@ -195,7 +195,7 @@ const FIXED_COST_CATS = ['Rent','Software & Tools','Insurance','Subscriptions','
 const DROP_BUDGET_CATS = ['Bulk Production','Samples','Taxes & Fees','Marketing','Packaging & Shipping','Fixed Costs','Other'];
 
 function defaultData(){
-  return { meta:{businessName:'My Brand'}, income:[], expenses:[], fixedCosts:[], products:[], drops:[] };
+  return { meta:{businessName:'My Brand'}, income:[], expenses:[], fixedCosts:[], products:[], drops:[], samples:[] };
 }
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(data)); }catch(e){} }
 
@@ -211,7 +211,8 @@ function load(){
         expenses: Array.isArray(d.expenses) ? d.expenses : [],
         fixedCosts: Array.isArray(d.fixedCosts) ? d.fixedCosts : [],
         products: Array.isArray(d.products) ? d.products : [],
-        drops: Array.isArray(d.drops) ? d.drops : []
+        drops: Array.isArray(d.drops) ? d.drops : [],
+        samples: Array.isArray(d.samples) ? d.samples : []
       };
       return;
     }
@@ -381,6 +382,7 @@ const SECTIONS = [
   ]},
   {group:'Planning', items:[
     {id:'products', label:'Products', icon:'📦'},
+    {id:'samples', label:'Samples & Bulk', icon:'🧵'},
     {id:'drops', label:'Drops & Budgets', icon:'🚀'}
   ]},
   {group:'', items:[
@@ -404,7 +406,7 @@ function buildSidebar(){
 }
 
 function baseView(view){
-  const map = {'product-detail':'products','drop-detail':'drops'};
+  const map = {'product-detail':'products','drop-detail':'drops','sample-detail':'samples'};
   return map[view]||view;
 }
 
@@ -439,6 +441,8 @@ function render(){
     fixedcosts: renderFixedCosts,
     products: renderProducts,
     'product-detail': renderProductDetail,
+    samples: renderSamples,
+    'sample-detail': renderSampleDetail,
     drops: renderDrops,
     'drop-detail': renderDropDetail,
     report: renderReport,
@@ -457,6 +461,7 @@ function openAddSheet(){
   if(mode==='entry') openAddEntry();
   else if(mode==='fixedcost') openAddFixedCost();
   else if(mode==='product') openAddProduct();
+  else if(mode==='sample') openAddSample();
   else if(mode==='drop') openAddDrop();
   else if(mode==='file') openAddFile();
 }
@@ -881,6 +886,257 @@ function unlogProductCost(pid, kind){
   const id = p.costLogged[kind];
   data.expenses = data.expenses.filter(e=>e.id!==id);
   p.costLogged[kind]=null; save(); toast('Removed from expenses'); navigate('product-detail', pid);
+}
+
+// ── SAMPLES & BULK (manufacturer sampling + bulk orders) ──────────────────
+function allCollections(){
+  const set = new Set();
+  data.samples.forEach(s=>{ if(s.collection) set.add(s.collection); });
+  return Array.from(set).sort();
+}
+function verdictPill(v){
+  if(v==='good') return `<span class="pill green">Good</span>`;
+  if(v==='bad') return `<span class="pill red">Not Good</span>`;
+  return `<span class="pill amber">Pending</span>`;
+}
+function bulkPill(s){
+  const b = s.bulk||{};
+  if(b.ordered) return `<span class="pill green">Bulk · ${n(b.qty)||0} pcs</span>`;
+  return `<span class="pill amber">No Bulk Yet</span>`;
+}
+function latestRound(s){
+  const r = s.rounds||[];
+  return r.length ? r[r.length-1] : null;
+}
+
+function renderSamples(){
+  $('page-title').textContent='Samples & Bulk';
+  $('page-sub').textContent=`${data.samples.length} item${data.samples.length!==1?'s':''}`;
+  $('top-action-btn').textContent='+ Sample';
+  $('top-action-btn').classList.remove('hidden');
+  window._sheetMode='sample';
+  window._sampleFilter = window._sampleFilter || {q:'', collection:''};
+  const f = window._sampleFilter;
+
+  let items = data.samples.slice();
+  if(f.collection) items = items.filter(s=>s.collection===f.collection);
+  if(f.q){
+    const q = f.q.toLowerCase();
+    items = items.filter(s=>(s.name||'').toLowerCase().includes(q) || (s.manufacturer||'').toLowerCase().includes(q));
+  }
+  items.sort((a,b)=>(b.ts||0)-(a.ts||0));
+
+  const bulkOrderedCount = data.samples.filter(s=>s.bulk&&s.bulk.ordered).length;
+  const totalSampleCost = data.samples.reduce((s,x)=>s+(x.rounds||[]).reduce((ss,r)=>ss+n(r.cost),0),0);
+  const totalBulkCost = data.samples.reduce((s,x)=>s+((x.bulk&&x.bulk.ordered)?n(x.bulk.cost):0),0);
+  const cols = allCollections();
+
+  $('page-content').innerHTML = `
+    <div class="filter-bar">
+      <input type="text" placeholder="Search name or manufacturer..." value="${esc(f.q)}" oninput="setSampleFilter('q',this.value)"/>
+      <select onchange="setSampleFilter('collection',this.value)" style="flex:1;min-width:130px;">
+        <option value="">All Collections</option>
+        ${cols.map(c=>`<option value="${esc(c)}" ${f.collection===c?'selected':''}>${esc(c)}</option>`).join('')}
+      </select>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-label">Items</div><div class="stat-value">${data.samples.length}</div></div>
+      <div class="stat-card"><div class="stat-label">In Bulk Production</div><div class="stat-value">${bulkOrderedCount}</div></div>
+      <div class="stat-card red"><div class="stat-label">Sample Costs</div><div class="stat-value">${fmt(totalSampleCost)}</div></div>
+      <div class="stat-card red"><div class="stat-label">Bulk Costs</div><div class="stat-value">${fmt(totalBulkCost)}</div></div>
+    </div>
+    ${items.length===0?`<div class="empty"><div class="empty-icon">🧵</div><p>No samples yet.<br/>Tap + Sample to track a manufacturer sample.</p></div>`
+    :items.map(s=>{
+      const lr = latestRound(s);
+      return `<div class="row-item" style="cursor:pointer;" onclick="navigate('sample-detail','${s.id}')">
+        <div class="row-item-left">
+          <div class="row-item-name">${esc(s.name)||'Unnamed Sample'}</div>
+          <div class="row-item-sub">${esc(s.manufacturer)||'No manufacturer'}${s.collection?(' · '+esc(s.collection)):''}${lr?(' · '+fmtDateShort(lr.orderDate)):''}</div>
+        </div>
+        <div class="row-item-right">
+          <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
+            ${lr?verdictPill(lr.verdict):'<span class="pill amber">No Rounds</span>'}
+            ${bulkPill(s)}
+          </div>
+          <span style="color:var(--muted)">›</span>
+        </div>
+      </div>`;
+    }).join('')}
+  `;
+}
+function setSampleFilter(key,val){ window._sampleFilter[key]=val; renderSamples(); }
+
+function openAddSample(){
+  const cols = allCollections();
+  $('sheet-content').innerHTML = `
+    <div class="sheet-title">New Sample</div>
+    <div class="field"><label class="field-label">Name</label><div class="input-wrap"><input id="sm-name" type="text" placeholder="e.g. Heavyweight Hoodie"/></div></div>
+    <div class="field"><label class="field-label">Manufacturer</label><div class="input-wrap"><input id="sm-mfr" type="text" placeholder="e.g. XYZ Textiles"/></div></div>
+    <div class="field" style="margin-bottom:0"><label class="field-label">Collection</label><div class="input-wrap"><input id="sm-col" type="text" list="sm-cols" placeholder="e.g. Fall 2026"/></div></div>
+    <datalist id="sm-cols">${cols.map(c=>`<option value="${esc(c)}">`).join('')}</datalist>
+    <button class="btn btn-dark" style="margin-top:14px;" onclick="saveNewSample()">Save Sample</button>
+  `;
+  showSheet();
+}
+function saveNewSample(){
+  const name = $('sm-name').value;
+  const s = {id:uid(), name, manufacturer:$('sm-mfr').value, collection:$('sm-col').value, rounds:[], bulk:{ordered:false,orderDate:'',qty:'',cost:'',notes:''}, ts:Date.now()};
+  data.samples.push(s); save(); closeSheet(); toast('Sample added'); navigate('sample-detail', s.id);
+}
+
+function renderSampleDetail(){
+  const s = data.samples.find(x=>x.id===routeExtra);
+  if(!s){ navigate('samples'); return; }
+  $('page-title').textContent=s.name||'Sample';
+  $('page-sub').textContent=s.manufacturer||'No manufacturer set';
+  $('top-action-btn').classList.add('hidden');
+  s.bulk = s.bulk || {ordered:false,orderDate:'',qty:'',cost:'',notes:''};
+  const rounds = s.rounds||[];
+  const cols = allCollections().filter(c=>c!==s.collection);
+  const totalRoundCost = rounds.reduce((sum,r)=>sum+n(r.cost),0);
+
+  $('page-content').innerHTML = `
+    <button class="back-btn" onclick="navigate('samples')">← Samples &amp; Bulk</button>
+
+    <div class="card">
+      <div class="card-title">Item Info</div>
+      <div class="field"><label class="field-label">Name</label>
+        <div class="input-wrap"><input type="text" value="${esc(s.name||'')}" placeholder="e.g. Heavyweight Hoodie" oninput="updateSample('${s.id}','name',this.value)"/></div></div>
+      <div class="field"><label class="field-label">Manufacturer</label>
+        <div class="input-wrap"><input type="text" value="${esc(s.manufacturer||'')}" placeholder="e.g. XYZ Textiles" oninput="updateSample('${s.id}','manufacturer',this.value)"/></div></div>
+      <div class="field" style="margin-bottom:0"><label class="field-label">Collection</label>
+        <div class="input-wrap"><input type="text" list="sm-cols-detail" value="${esc(s.collection||'')}" placeholder="e.g. Fall 2026" oninput="updateSample('${s.id}','collection',this.value)"/></div>
+        <datalist id="sm-cols-detail">${cols.map(c=>`<option value="${esc(c)}">`).join('')}</datalist>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-head"><div class="card-title" style="margin-bottom:0">Sample Rounds</div><button class="btn btn-dark btn-sm" onclick="openAddRound('${s.id}')">+ Round</button></div>
+      ${rounds.length===0?`<div style="text-align:center;padding:16px;color:var(--muted);font-size:13px;">No sample rounds yet. Log the 1st sample you ordered from this manufacturer.</div>`
+      :rounds.map((r,i)=>`
+        <div class="row-item" style="cursor:pointer;" onclick="openAddRound('${s.id}','${r.id}')">
+          <div class="row-item-left">
+            <div class="row-item-name">Round ${i+1} ${verdictPill(r.verdict)}</div>
+            <div class="row-item-sub">Ordered ${fmtDateShort(r.orderDate)}${r.sampleDate?(' · Received '+fmtDateShort(r.sampleDate)):''}${r.notes?(' · '+esc(r.notes)):''}</div>
+          </div>
+          <div class="row-item-right">
+            <span class="amount" style="color:var(--text)">${fmt(r.cost)}</span>
+            <button class="del-btn" onclick="event.stopPropagation();deleteRound('${s.id}','${r.id}')">✕</button>
+          </div>
+        </div>`).join('')}
+      ${rounds.length>0?`<div class="divider"></div>
+      <div style="display:flex;justify-content:space-between;">
+        <span style="font-size:13px;color:var(--muted)">Total sample costs</span>
+        <span style="font-size:15px;font-weight:700;">${fmt(totalRoundCost)}</span>
+      </div>`:''}
+    </div>
+
+    <div class="card">
+      <div class="card-title">Bulk Order</div>
+      <div class="type-tabs">
+        <button class="type-tab ${!s.bulk.ordered?'active':''}" onclick="setBulkOrdered('${s.id}',false)">Not Ordered</button>
+        <button class="type-tab ${s.bulk.ordered?'active':''}" onclick="setBulkOrdered('${s.id}',true)">Ordered</button>
+      </div>
+      ${!s.bulk.ordered?`<div style="text-align:center;padding:10px 0 4px;color:var(--muted);font-size:13px;">Switch to "Ordered" once you place the bulk order.</div>`
+      :`
+      <div class="field"><label class="field-label">Order Date</label>
+        <div class="input-wrap"><input type="date" value="${s.bulk.orderDate||''}" onchange="updateBulk('${s.id}','orderDate',this.value)"/></div></div>
+      <div class="field"><label class="field-label">Quantity</label>
+        <div class="input-wrap"><input type="number" inputmode="decimal" value="${s.bulk.qty||''}" placeholder="e.g. 200" oninput="updateBulk('${s.id}','qty',this.value)"/><span class="input-suffix">pcs</span></div></div>
+      <div class="field"><label class="field-label">Bulk Cost</label>
+        <div class="input-wrap"><input type="number" inputmode="decimal" value="${s.bulk.cost||''}" placeholder="0.00" oninput="updateBulk('${s.id}','cost',this.value)"/><span class="input-suffix">€</span></div></div>
+      <div class="field" style="margin-bottom:0"><label class="field-label">Notes</label>
+        <div class="input-wrap"><input type="text" value="${esc(s.bulk.notes||'')}" placeholder="e.g. supplier, lead time..." oninput="updateBulk('${s.id}','notes',this.value)"/></div></div>
+      `}
+    </div>
+
+    <button class="btn btn-red" onclick="deleteSample('${s.id}')">Delete Sample</button>
+  `;
+}
+function updateSample(id, field, value){
+  const s = data.samples.find(x=>x.id===id); if(!s) return;
+  s[field]=value; save();
+  clearTimeout(window._sampleRenderTimer);
+  window._sampleRenderTimer = setTimeout(()=>{ if(routeExtra===id) renderSampleDetail(); },600);
+}
+function deleteSample(id){
+  if(!confirm('Delete this sample and all its rounds and bulk order info?')) return;
+  data.samples = data.samples.filter(x=>x.id!==id);
+  save(); toast('Sample deleted'); navigate('samples');
+}
+function setBulkOrdered(id, ordered){
+  const s = data.samples.find(x=>x.id===id); if(!s) return;
+  s.bulk = s.bulk || {orderDate:'',qty:'',cost:'',notes:''};
+  s.bulk.ordered = ordered;
+  save(); renderSampleDetail();
+}
+function updateBulk(id, field, value){
+  const s = data.samples.find(x=>x.id===id); if(!s) return;
+  s.bulk = s.bulk || {ordered:true,orderDate:'',qty:'',cost:'',notes:''};
+  s.bulk[field]=value; save();
+  clearTimeout(window._bulkRenderTimer);
+  window._bulkRenderTimer = setTimeout(()=>{ if(routeExtra===id) renderSampleDetail(); },600);
+}
+
+function openAddRound(sampleId, roundId){
+  const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
+  const existing = roundId ? (s.rounds||[]).find(r=>r.id===roundId) : null;
+  window._roundVerdict = existing ? existing.verdict : 'pending';
+  renderRoundSheet(sampleId, roundId, existing);
+  showSheet();
+}
+function setRoundVerdict(sampleId, roundId, v){
+  window._roundVerdict = v;
+  const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
+  const existing = roundId ? (s.rounds||[]).find(r=>r.id===roundId) : null;
+  renderRoundSheet(sampleId, roundId, existing);
+}
+function renderRoundSheet(sampleId, roundId, existing){
+  const v = window._roundVerdict||'pending';
+  $('sheet-content').innerHTML = `
+    <div class="sheet-title">${existing?'Edit':'New'} Sample Round</div>
+    <div class="field"><label class="field-label">Order Date</label>
+      <div class="input-wrap"><input id="rd-order" type="date" value="${(existing&&existing.orderDate)||isoToday()}"/></div></div>
+    <div class="field"><label class="field-label">Sample Received</label>
+      <div class="input-wrap"><input id="rd-recv" type="date" value="${(existing&&existing.sampleDate)||''}"/></div></div>
+    <div class="field"><label class="field-label">Verdict — Was It Good?</label>
+      <div class="type-tabs">
+        <button class="type-tab ${v==='good'?'active':''}" onclick="setRoundVerdict('${sampleId}','${roundId||''}','good')">Good</button>
+        <button class="type-tab ${v==='bad'?'active':''}" onclick="setRoundVerdict('${sampleId}','${roundId||''}','bad')">Not Good</button>
+        <button class="type-tab ${v==='pending'?'active':''}" onclick="setRoundVerdict('${sampleId}','${roundId||''}','pending')">Pending</button>
+      </div>
+    </div>
+    <div class="field"><label class="field-label">Cost</label>
+      <div class="input-wrap"><input id="rd-cost" type="number" inputmode="decimal" value="${(existing&&existing.cost)||''}" placeholder="0.00"/><span class="input-suffix">€</span></div></div>
+    <div class="field" style="margin-bottom:0"><label class="field-label">Notes</label>
+      <div class="input-wrap"><input id="rd-notes" type="text" value="${esc((existing&&existing.notes)||'')}" placeholder="e.g. fabric was off, fit good..."/></div></div>
+    <button class="btn btn-dark" style="margin-top:14px;" onclick="saveRound('${sampleId}','${roundId||''}')">${existing?'Save Changes':'Add Round'}</button>
+  `;
+}
+function saveRound(sampleId, roundId){
+  const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
+  s.rounds = s.rounds||[];
+  const rec = {
+    id: roundId||uid(),
+    orderDate: $('rd-order').value||isoToday(),
+    sampleDate: $('rd-recv').value||'',
+    verdict: window._roundVerdict||'pending',
+    cost: $('rd-cost').value,
+    notes: $('rd-notes').value
+  };
+  if(roundId){
+    const idx = s.rounds.findIndex(r=>r.id===roundId);
+    if(idx>-1) s.rounds[idx]=rec; else s.rounds.push(rec);
+  } else {
+    s.rounds.push(rec);
+  }
+  save(); closeSheet(); toast(roundId?'Round updated':'Round added'); navigate('sample-detail', sampleId);
+}
+function deleteRound(sampleId, roundId){
+  if(!confirm('Delete this sample round?')) return;
+  const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
+  s.rounds = (s.rounds||[]).filter(r=>r.id!==roundId);
+  save(); toast('Round deleted'); navigate('sample-detail', sampleId);
 }
 
 // ── DROPS & BUDGETS ───────────────────────────────────────────────────────

@@ -181,9 +181,15 @@ function saveLocal(){ try{ localStorage.setItem(LOCAL_KEY, JSON.stringify(data))
 async function loadData(){
   if(db){
     try{
+      // db.get() returns frozen documents/arrays (per the platform's own
+      // docs) — deep-clone via JSON round-trip so nested arrays like
+      // rounds/techPacks/photos can actually be push()ed/mutated later.
+      // Without this, editing anything loaded from a fresh page load
+      // (rather than created fresh this session) throws "Attempted to
+      // assign to readonly property."
       const [sSnap, bSnap] = await Promise.all([db.collection('samples').get(), db.collection('bulkOrders').get()]);
-      data.samples = sSnap.docs.map(d=>Object.assign({id:d.id}, d.data()));
-      data.bulkOrders = bSnap.docs.map(d=>Object.assign({id:d.id}, d.data()));
+      data.samples = sSnap.docs.map(d=>JSON.parse(JSON.stringify(Object.assign({id:d.id}, d.data()))));
+      data.bulkOrders = bSnap.docs.map(d=>JSON.parse(JSON.stringify(Object.assign({id:d.id}, d.data()))));
       return;
     }catch(e){}
   }

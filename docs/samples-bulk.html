@@ -260,7 +260,8 @@ function friendlyUploadError(err){
   if(code==='quota_or_state') return 'Storage is full — delete some old files first.';
   if(code==='rate_limited') return 'Too many uploads at once — wait a moment and try again.';
   if(code==='not_granted') return 'File uploads need this page opened as your Claude artifact.';
-  return 'Could not upload the file. Please try again.';
+  const detail = code || (err && err.message) || 'unknown error';
+  return 'Upload failed (' + detail + '). Please try again.';
 }
 
 // ── HELPERS ─────────────────────────────────────────────────────────────────

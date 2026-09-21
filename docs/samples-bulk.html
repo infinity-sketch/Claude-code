@@ -594,7 +594,7 @@ function renderSampleDetail(){
             <div class="row-item-sub">${fmtSize(t.size)} · ${fmtDateShort((t.ts?new Date(t.ts).toISOString():'').slice(0,10))}</div>
           </div>
           <div class="row-item-right">
-            <a href="${blobUrl(t.assetId)}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">View</a>
+            <button class="btn btn-outline btn-sm" onclick="viewTechPack('${s.id}','${t.id}')">View</button>
             <button class="del-btn" onclick="deleteTechPack('${s.id}','${t.id}')">✕</button>
           </div>
         </div>`).join('')}
@@ -602,8 +602,9 @@ function renderSampleDetail(){
 
     <div class="card">
       <div class="section-head"><div class="card-title" style="margin-bottom:0">Sample Photos</div>
-        ${canUpload?`<button class="btn btn-dark btn-sm" onclick="openAddPhoto('${s.id}')">+ Add Photo</button>`:''}
+        ${canUpload?`<button class="btn btn-dark btn-sm" onclick="$('photo-file-input').click()">+ Add Photo</button>`:''}
       </div>
+      ${canUpload?`<input type="file" id="photo-file-input" class="hidden-file-input" accept="image/*" onchange="handlePhotoUpload('${s.id}', this)"/>`:''}
       ${s.photos.length===0?`<div class="muted-note">${canUpload?'No photos yet. e.g. a photo of the zip with a note "wrong colour".':'Photo uploads need this page opened as your Claude artifact.'}</div>`
       :`<div class="photo-grid">${s.photos.map(p=>`
         <div class="photo-tile" onclick="editPhotoNote('${s.id}','${p.id}')">
@@ -751,11 +752,28 @@ async function handleTechPackUpload(sampleId, inputEl){
     const res = await assetsApi.upload(f);
     assetUrlCache[res.id] = res.url;
     s.techPacks = s.techPacks||[];
-    s.techPacks.push({id:uid(), assetId:res.id, name:f.name, size:f.size, ts:Date.now()});
+    s.techPacks.push({id:uid(), assetId:res.id, name:f.name, size:f.size, type:f.type, ts:Date.now()});
     renderSampleDetail(); toast('Tech pack uploaded');
     await persistSample(s);
   }catch(e){ toast(friendlyUploadError(e), 3500); }
   inputEl.value='';
+}
+function viewTechPack(sampleId, tpId){
+  const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
+  const t = (s.techPacks||[]).find(x=>x.id===tpId); if(!t) return;
+  const url = blobUrl(t.assetId);
+  // Older tech packs saved before this field existed have no `type`, so
+  // fall back to guessing from the filename extension.
+  const isImage = (t.type||'').startsWith('image/') || /\.(png|jpe?g|gif|webp)$/i.test(t.name||'');
+  const isPdf = (t.type||'')==='application/pdf' || /\.pdf$/i.test(t.name||'');
+  $('sheet-content').innerHTML = `
+    <div class="sheet-title">${esc(t.name)}</div>
+    ${isImage?`<img src="${url}" style="width:100%;border-radius:14px;display:block;"/>`
+     :isPdf?`<iframe src="${url}" style="width:100%;height:65vh;border:1px solid var(--border);border-radius:14px;background:#fff;"></iframe>`
+     :`<div class="muted-note">Preview not available for this file type.</div>`}
+    <button class="btn btn-outline" style="margin-top:14px;" onclick="closeSheet()">Close</button>
+  `;
+  showSheet();
 }
 function deleteTechPack(sampleId, tpId){
   confirmSheet('Delete this tech pack?', async ()=>{
@@ -769,31 +787,23 @@ function deleteTechPack(sampleId, tpId){
 }
 
 // ── SAMPLE PHOTOS (with notes) ────────────────────────────────────────────
-function openAddPhoto(sampleId){
-  $('sheet-content').innerHTML = `
-    <div class="sheet-title">Add Photo</div>
-    <div class="field"><label class="field-label">Photo</label>
-      <div class="input-wrap"><input id="ph-file" type="file" accept="image/*"/></div></div>
-    <div class="field" style="margin-bottom:0"><label class="field-label">Note</label>
-      <div class="input-wrap"><input id="ph-note" type="text" placeholder="e.g. zip wrong colour"/></div></div>
-    <button class="btn btn-dark" id="ph-save-btn" style="margin-top:14px;" onclick="savePhoto('${sampleId}')">Add Photo</button>
-  `;
-  showSheet();
-}
-async function savePhoto(sampleId){
+// Uploads immediately on file selection (same hidden-input + button pattern
+// as tech packs / profile photo, which is more reliable than a file input
+// sitting inside a sheet), then opens the note editor right after.
+async function handlePhotoUpload(sampleId, inputEl){
+  const f = inputEl.files[0]; if(!f) return;
   const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
-  const f = $('ph-file').files[0];
-  if(!f){ toast('Choose a photo first', 2500); return; }
-  const note = $('ph-note').value;
-  const btn = $('ph-save-btn'); if(btn){ btn.disabled=true; btn.textContent='Uploading…'; }
   try{
     const res = await assetsApi.upload(f);
     assetUrlCache[res.id] = res.url;
     s.photos = s.photos||[];
-    s.photos.push({id:uid(), assetId:res.id, note, ts:Date.now()});
-    closeSheet(); toast('Photo added'); navigate('detail', sampleId);
+    const photoId = uid();
+    s.photos.push({id:photoId, assetId:res.id, note:'', ts:Date.now()});
+    renderSampleDetail(); toast('Photo added');
     await persistSample(s);
-  }catch(e){ toast(friendlyUploadError(e), 3500); if(btn){ btn.disabled=false; btn.textContent='Add Photo'; } }
+    editPhotoNote(sampleId, photoId);
+  }catch(e){ toast(friendlyUploadError(e), 3500); }
+  inputEl.value='';
 }
 function editPhotoNote(sampleId, photoId){
   const s = data.samples.find(x=>x.id===sampleId); if(!s) return;

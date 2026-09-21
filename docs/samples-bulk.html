@@ -60,9 +60,9 @@ html,body{min-height:100%;background:var(--bg);font-family:var(--font);color:var
 .input-wrap input[type=text],.input-wrap input[type=number],.input-wrap input[type=date]{flex:1;border:none;background:transparent;padding:14px 14px;font-size:15px;color:var(--text);font-family:var(--font);outline:none;min-height:48px;min-width:0;}
 .input-wrap input[type=file]{flex:1;padding:12px 14px;font-size:13px;font-family:var(--font);color:var(--text);}
 .input-wrap input::placeholder{color:#ccc;}
-.input-wrap input[type=date]{cursor:pointer;}
-.input-wrap input[type=date]::-webkit-calendar-picker-indicator{cursor:pointer;opacity:0.75;padding:4px;}
 select{width:100%;border:1.5px solid var(--border);border-radius:12px;padding:14px;font-size:15px;color:var(--text);font-family:var(--font);background:var(--bg);outline:none;min-height:48px;-webkit-appearance:none;appearance:none;}
+.date-parts{display:flex;gap:6px;}
+.date-parts select{padding:10px 4px;font-size:13.5px;min-height:44px;text-align:center;}
 
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:14px;padding:15px 20px;font-size:15px;font-weight:600;font-family:var(--font);cursor:pointer;min-height:52px;width:100%;transition:opacity 0.15s,transform 0.1s;}
 .btn:active{opacity:0.85;transform:scale(0.98);}
@@ -221,16 +221,52 @@ const isoToday = () => new Date().toISOString().slice(0,10);
 function fmtDateShort(iso){ if(!iso) return ''; const d=new Date(iso+'T00:00:00'); if(isNaN(d)) return iso; return d.toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
 function fmtSize(bytes){ bytes=bytes||0; if(bytes<1024) return bytes+' B'; if(bytes<1024*1024) return (bytes/1024).toFixed(1)+' KB'; return (bytes/1024/1024).toFixed(1)+' MB'; }
 let toastTimer;
-function toast(msg){
+function toast(msg, ms){
   let t = $('sb-toast');
   if(!t){ t=document.createElement('div'); t.id='sb-toast'; document.body.appendChild(t); }
   t.textContent = '✓ '+msg;
   t.style.opacity='1';
   clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>{ t.style.opacity='0'; }, 1600);
+  toastTimer=setTimeout(()=>{ t.style.opacity='0'; }, ms||1600);
 }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-function openDatePicker(el){ try{ el.showPicker && el.showPicker(); }catch(e){} }
+
+// Artifacts run in a sandboxed iframe where native confirm()/alert() dialogs
+// are unreliable (often silently no-op), so deletions get their own sheet.
+function confirmSheet(message, onYes, confirmLabel){
+  $('sheet-content').innerHTML = `
+    <div class="sheet-title">Are you sure?</div>
+    <p style="font-size:14px;color:var(--muted);line-height:1.5;margin-bottom:18px;">${esc(message)}</p>
+    <button class="btn btn-red" onclick="window._confirmYes()">${esc(confirmLabel||'Delete')}</button>
+    <button class="btn btn-outline" style="margin-top:10px;" onclick="closeSheet()">Cancel</button>
+  `;
+  window._confirmYes = function(){ closeSheet(); onYes(); };
+  showSheet();
+}
+
+// Plain day/month/year selects instead of a native <input type=date> — the
+// iframe sandbox can make the native picker unreliable, selects always work.
+const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function dateSelectHtml(prefix, iso, onchangeAttr){
+  const parts = (iso||'').split('-');
+  const y = parts[0]?parseInt(parts[0],10):'', m = parts[1]?parseInt(parts[1],10):'', d = parts[2]?parseInt(parts[2],10):'';
+  const curYear = new Date().getFullYear();
+  const years = []; for(let yy=curYear-3; yy<=curYear+3; yy++) years.push(yy);
+  const days = []; for(let dd=1; dd<=31; dd++) days.push(dd);
+  const chg = onchangeAttr||'';
+  return `<div class="date-parts">
+    <select id="${prefix}-d" ${chg}><option value="">Day</option>${days.map(dd=>`<option value="${dd}" ${dd===d?'selected':''}>${dd}</option>`).join('')}</select>
+    <select id="${prefix}-m" ${chg}><option value="">Month</option>${MONTH_NAMES.map((mm,i)=>`<option value="${i+1}" ${(i+1)===m?'selected':''}>${mm}</option>`).join('')}</select>
+    <select id="${prefix}-y" ${chg}><option value="">Year</option>${years.map(yy=>`<option value="${yy}" ${yy===y?'selected':''}>${yy}</option>`).join('')}</select>
+  </div>`;
+}
+function readDateSelect(prefix){
+  const d = $(prefix+'-d') ? $(prefix+'-d').value : '';
+  const m = $(prefix+'-m') ? $(prefix+'-m').value : '';
+  const y = $(prefix+'-y') ? $(prefix+'-y').value : '';
+  if(!d||!m||!y) return '';
+  return y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+}
 
 function navigate(view, extra){
   currentView = view;
@@ -446,7 +482,7 @@ function renderSampleDetail(){
       ${!s.bulk.ordered?`<div style="text-align:center;padding:10px 0 4px;color:var(--muted);font-size:13px;">Switch to "Ordered" once you place the bulk order.</div>`
       :`
       <div class="field"><label class="field-label">Order Date</label>
-        <div class="input-wrap"><input type="date" value="${s.bulk.orderDate||''}" onclick="openDatePicker(this)" onchange="updateBulk('${s.id}','orderDate',this.value)"/></div></div>
+        ${dateSelectHtml('bulk-order-'+s.id, s.bulk.orderDate, `onchange="updateBulk('${s.id}','orderDate',readDateSelect('bulk-order-${s.id}'))"`)}</div>
       <div class="field"><label class="field-label">Quantity</label>
         <div class="input-wrap"><input type="number" inputmode="decimal" value="${s.bulk.qty||''}" placeholder="e.g. 200" oninput="updateBulk('${s.id}','qty',this.value)"/><span class="input-suffix">pcs</span></div></div>
       <div class="field"><label class="field-label">Bulk Cost</label>
@@ -465,17 +501,18 @@ async function updateSample(id, field, value){
   clearTimeout(window._sampleRenderTimer);
   window._sampleRenderTimer = setTimeout(async ()=>{ await persistSample(s); },600);
 }
-async function deleteSample(id){
-  if(!confirm('Delete this sample and all its rounds, photos and files?')) return;
-  const s = data.samples.find(x=>x.id===id);
-  data.samples = data.samples.filter(x=>x.id!==id);
-  toast('Sample deleted'); navigate('list');
-  if(s){
-    if(s.profilePhotoId) deleteAsset(s.profilePhotoId);
-    (s.techPacks||[]).forEach(t=>deleteAsset(t.assetId));
-    (s.photos||[]).forEach(p=>deleteAsset(p.assetId));
-  }
-  await persistDeleteSample(id);
+function deleteSample(id){
+  confirmSheet('Delete this sample and all its rounds, photos and files?', async ()=>{
+    const s = data.samples.find(x=>x.id===id);
+    data.samples = data.samples.filter(x=>x.id!==id);
+    toast('Sample deleted'); navigate('list');
+    if(s){
+      if(s.profilePhotoId) deleteAsset(s.profilePhotoId);
+      (s.techPacks||[]).forEach(t=>deleteAsset(t.assetId));
+      (s.photos||[]).forEach(p=>deleteAsset(p.assetId));
+    }
+    await persistDeleteSample(id);
+  });
 }
 async function setBulkOrdered(id, ordered){
   const s = data.samples.find(x=>x.id===id); if(!s) return;
@@ -504,7 +541,7 @@ async function handleProfileUpload(sampleId, inputEl){
     renderSampleDetail(); toast('Photo updated');
     await persistSample(s);
     if(oldId) deleteAsset(oldId);
-  }catch(e){ alert(friendlyUploadError(e)); }
+  }catch(e){ toast(friendlyUploadError(e), 3500); }
   inputEl.value='';
 }
 async function removeProfilePhoto(sampleId){
@@ -526,17 +563,18 @@ async function handleTechPackUpload(sampleId, inputEl){
     s.techPacks.push({id:uid(), assetId:res.id, name:f.name, size:f.size, ts:Date.now()});
     renderSampleDetail(); toast('Tech pack uploaded');
     await persistSample(s);
-  }catch(e){ alert(friendlyUploadError(e)); }
+  }catch(e){ toast(friendlyUploadError(e), 3500); }
   inputEl.value='';
 }
-async function deleteTechPack(sampleId, tpId){
-  if(!confirm('Delete this tech pack?')) return;
-  const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
-  const tp = (s.techPacks||[]).find(x=>x.id===tpId);
-  s.techPacks = (s.techPacks||[]).filter(x=>x.id!==tpId);
-  renderSampleDetail(); toast('Tech pack deleted');
-  await persistSample(s);
-  if(tp) deleteAsset(tp.assetId);
+function deleteTechPack(sampleId, tpId){
+  confirmSheet('Delete this tech pack?', async ()=>{
+    const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
+    const tp = (s.techPacks||[]).find(x=>x.id===tpId);
+    s.techPacks = (s.techPacks||[]).filter(x=>x.id!==tpId);
+    renderSampleDetail(); toast('Tech pack deleted');
+    await persistSample(s);
+    if(tp) deleteAsset(tp.assetId);
+  });
 }
 
 // ── SAMPLE PHOTOS (with notes) ────────────────────────────────────────────
@@ -554,7 +592,7 @@ function openAddPhoto(sampleId){
 async function savePhoto(sampleId){
   const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
   const f = $('ph-file').files[0];
-  if(!f){ alert('Choose a photo first'); return; }
+  if(!f){ toast('Choose a photo first', 2500); return; }
   const note = $('ph-note').value;
   const btn = $('ph-save-btn'); if(btn){ btn.disabled=true; btn.textContent='Uploading…'; }
   try{
@@ -563,7 +601,7 @@ async function savePhoto(sampleId){
     s.photos.push({id:uid(), assetId:res.id, note, ts:Date.now()});
     closeSheet(); toast('Photo added'); navigate('detail', sampleId);
     await persistSample(s);
-  }catch(e){ alert(friendlyUploadError(e)); if(btn){ btn.disabled=false; btn.textContent='Add Photo'; } }
+  }catch(e){ toast(friendlyUploadError(e), 3500); if(btn){ btn.disabled=false; btn.textContent='Add Photo'; } }
 }
 function editPhotoNote(sampleId, photoId){
   const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
@@ -585,14 +623,15 @@ async function savePhotoNote(sampleId, photoId){
   closeSheet(); toast('Note updated'); navigate('detail', sampleId);
   await persistSample(s);
 }
-async function deletePhoto(sampleId, photoId){
-  if(!confirm('Delete this photo?')) return;
-  const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
-  const p = (s.photos||[]).find(x=>x.id===photoId);
-  s.photos = (s.photos||[]).filter(x=>x.id!==photoId);
-  closeSheet(); toast('Photo deleted'); navigate('detail', sampleId);
-  await persistSample(s);
-  if(p) deleteAsset(p.assetId);
+function deletePhoto(sampleId, photoId){
+  confirmSheet('Delete this photo?', async ()=>{
+    const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
+    const p = (s.photos||[]).find(x=>x.id===photoId);
+    s.photos = (s.photos||[]).filter(x=>x.id!==photoId);
+    toast('Photo deleted'); navigate('detail', sampleId);
+    await persistSample(s);
+    if(p) deleteAsset(p.assetId);
+  });
 }
 
 // ── SAMPLE ROUNDS ───────────────────────────────────────────────────────────
@@ -608,8 +647,8 @@ function setRoundVerdict(sampleId, roundId, v){
   const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
   const existing = roundId ? (s.rounds||[]).find(r=>r.id===roundId) : null;
   const draft = {
-    orderDate: $('rd-order') ? $('rd-order').value : '',
-    sampleDate: $('rd-recv') ? $('rd-recv').value : '',
+    orderDate: readDateSelect('rd-order'),
+    sampleDate: readDateSelect('rd-recv'),
     cost: $('rd-cost') ? $('rd-cost').value : '',
     notes: $('rd-notes') ? $('rd-notes').value : ''
   };
@@ -624,9 +663,9 @@ function renderRoundSheet(sampleId, roundId, existing, draft){
   $('sheet-content').innerHTML = `
     <div class="sheet-title">${existing?'Edit':'New'} Sample Round</div>
     <div class="field"><label class="field-label">Order Date</label>
-      <div class="input-wrap"><input id="rd-order" type="date" value="${orderDate}" onclick="openDatePicker(this)"/></div></div>
+      ${dateSelectHtml('rd-order', orderDate)}</div>
     <div class="field"><label class="field-label">Sample Received</label>
-      <div class="input-wrap"><input id="rd-recv" type="date" value="${sampleDate}" onclick="openDatePicker(this)"/></div></div>
+      ${dateSelectHtml('rd-recv', sampleDate)}</div>
     <div class="field"><label class="field-label">Verdict — Was It Good?</label>
       <div class="type-tabs">
         <button class="type-tab ${v==='good'?'active':''}" onclick="setRoundVerdict('${sampleId}','${roundId||''}','good')">Good</button>
@@ -646,8 +685,8 @@ async function saveRound(sampleId, roundId){
   s.rounds = s.rounds||[];
   const rec = {
     id: roundId||uid(),
-    orderDate: $('rd-order').value||isoToday(),
-    sampleDate: $('rd-recv').value||'',
+    orderDate: readDateSelect('rd-order')||isoToday(),
+    sampleDate: readDateSelect('rd-recv')||'',
     verdict: window._roundVerdict||'pending',
     cost: $('rd-cost').value,
     notes: $('rd-notes').value
@@ -661,12 +700,13 @@ async function saveRound(sampleId, roundId){
   closeSheet(); toast(roundId?'Round updated':'Round added'); navigate('detail', sampleId);
   await persistSample(s);
 }
-async function deleteRound(sampleId, roundId){
-  if(!confirm('Delete this sample round?')) return;
-  const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
-  s.rounds = (s.rounds||[]).filter(r=>r.id!==roundId);
-  toast('Round deleted'); navigate('detail', sampleId);
-  await persistSample(s);
+function deleteRound(sampleId, roundId){
+  confirmSheet('Delete this sample round?', async ()=>{
+    const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
+    s.rounds = (s.rounds||[]).filter(r=>r.id!==roundId);
+    toast('Round deleted'); navigate('detail', sampleId);
+    await persistSample(s);
+  });
 }
 
 // ── INIT ────────────────────────────────────────────────────────────────────

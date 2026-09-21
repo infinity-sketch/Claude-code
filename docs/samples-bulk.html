@@ -232,7 +232,22 @@ async function migrateLegacyBulk(){
     await persistSample(s);
   }
 }
-function blobUrl(assetId){ return assetId ? ('/_blob/'+assetId) : ''; }
+// Cache of assetId -> the platform's live display URL. Uploads hand us a
+// verbatim url right away; for ids loaded back from earlier sessions we
+// look them up via assets.list() once at startup (refreshAssetUrls) rather
+// than hand-building a "/_blob/"+id path, which wasn't rendering reliably.
+let assetUrlCache = {};
+function blobUrl(assetId){
+  if(!assetId) return '';
+  return assetUrlCache[assetId] || ('/_blob/'+assetId);
+}
+async function refreshAssetUrls(){
+  if(!assetsApi) return;
+  try{
+    const res = await assetsApi.list();
+    (res.assets||[]).forEach(a=>{ assetUrlCache[a.id] = a.url; });
+  }catch(e){}
+}
 function filesAvailable(){ return !!assetsApi; }
 async function deleteAsset(assetId){
   if(!assetsApi || !assetId) return;
@@ -349,7 +364,7 @@ function latestRound(s){
 }
 function avatarHtml(assetId, size, fallbackIcon){
   const cls = size==='lg' ? 'avatar avatar-lg' : 'avatar avatar-sm';
-  if(assetId) return `<div class="${cls}"><img src="${blobUrl(assetId)}"/></div>`;
+  if(assetId) return `<div class="${cls}"><img src="${blobUrl(assetId)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"/><span style="display:none;">${fallbackIcon}</span></div>`;
   return `<div class="${cls}"><span>${fallbackIcon}</span></div>`;
 }
 function storageNoteHtml(){
@@ -592,7 +607,8 @@ function renderSampleDetail(){
       ${s.photos.length===0?`<div class="muted-note">${canUpload?'No photos yet. e.g. a photo of the zip with a note "wrong colour".':'Photo uploads need this page opened as your Claude artifact.'}</div>`
       :`<div class="photo-grid">${s.photos.map(p=>`
         <div class="photo-tile" onclick="editPhotoNote('${s.id}','${p.id}')">
-          <img src="${blobUrl(p.assetId)}"/>
+          <img src="${blobUrl(p.assetId)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"/>
+          <div style="display:none;align-items:center;justify-content:center;aspect-ratio:1;color:var(--muted);font-size:10.5px;text-align:center;padding:6px;">Image unavailable</div>
           <button class="ph-del" onclick="event.stopPropagation();deletePhoto('${s.id}','${p.id}')">✕</button>
           ${p.note?`<div class="photo-note">${esc(p.note)}</div>`:''}
         </div>`).join('')}</div>`}
@@ -710,6 +726,7 @@ async function handleProfileUpload(sampleId, inputEl){
   const oldId = s.profilePhotoId;
   try{
     const res = await assetsApi.upload(f);
+    assetUrlCache[res.id] = res.url;
     s.profilePhotoId = res.id;
     renderSampleDetail(); toast('Photo updated');
     await persistSample(s);
@@ -732,6 +749,7 @@ async function handleTechPackUpload(sampleId, inputEl){
   const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
   try{
     const res = await assetsApi.upload(f);
+    assetUrlCache[res.id] = res.url;
     s.techPacks = s.techPacks||[];
     s.techPacks.push({id:uid(), assetId:res.id, name:f.name, size:f.size, ts:Date.now()});
     renderSampleDetail(); toast('Tech pack uploaded');
@@ -770,6 +788,7 @@ async function savePhoto(sampleId){
   const btn = $('ph-save-btn'); if(btn){ btn.disabled=true; btn.textContent='Uploading…'; }
   try{
     const res = await assetsApi.upload(f);
+    assetUrlCache[res.id] = res.url;
     s.photos = s.photos||[];
     s.photos.push({id:uid(), assetId:res.id, note, ts:Date.now()});
     closeSheet(); toast('Photo added'); navigate('detail', sampleId);
@@ -887,6 +906,7 @@ function deleteRound(sampleId, roundId){
   await initCapabilities();
   await loadData();
   await migrateLegacyBulk();
+  await refreshAssetUrls();
   render();
 })();
 </script>

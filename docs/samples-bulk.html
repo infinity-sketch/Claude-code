@@ -274,7 +274,23 @@ function navigate(view, extra){
   render();
   window.scrollTo(0,0);
 }
-function render(){ if(currentView==='detail') renderSampleDetail(); else renderSamples(); }
+function render(){
+  if(currentView==='detail') renderSampleDetail();
+  else if(currentView==='bulk-detail') renderBulkDetail();
+  else renderList();
+}
+function setSection(s){ window._section = s; navigate('list'); }
+function sectionTabsHtml(){
+  window._section = window._section || 'samples';
+  return `<div class="type-tabs">
+    <button class="type-tab ${window._section==='samples'?'active':''}" onclick="setSection('samples')">Samples</button>
+    <button class="type-tab ${window._section==='bulk'?'active':''}" onclick="setSection('bulk')">Bulk</button>
+  </div>`;
+}
+function renderList(){
+  window._section = window._section || 'samples';
+  if(window._section==='bulk') renderBulkList(); else renderSamplesList();
+}
 function showSheet(){ $('sheet-overlay').classList.remove('hidden'); }
 function closeSheet(e){ if(!e || e.target===$('sheet-overlay')) $('sheet-overlay').classList.add('hidden'); }
 
@@ -303,10 +319,14 @@ function avatarHtml(assetId, size, fallbackIcon){
   if(assetId) return `<div class="${cls}"><img src="${blobUrl(assetId)}"/></div>`;
   return `<div class="${cls}"><span>${fallbackIcon}</span></div>`;
 }
+function storageNoteHtml(){
+  return `<div class="storage-note">${db?'☁️ Synced &amp; saved automatically to your Claude account':'💾 Saved in this browser only — open via your Claude artifact link for photo/file uploads and account sync'}</div>`;
+}
 
-function renderSamples(){
-  $('page-title').textContent='Samples & Bulk';
+function renderSamplesList(){
+  $('page-title').textContent='Samples';
   $('page-sub').textContent=`${data.samples.length} item${data.samples.length!==1?'s':''}`;
+  $('top-action-btn').textContent='+ Sample';
   $('top-action-btn').classList.remove('hidden');
   window._sampleFilter = window._sampleFilter || {q:'', collection:''};
   const f = window._sampleFilter;
@@ -319,12 +339,13 @@ function renderSamples(){
   }
   items.sort((a,b)=>(b.ts||0)-(a.ts||0));
 
-  const bulkOrderedCount = data.samples.filter(s=>s.bulk&&s.bulk.ordered).length;
+  const approvedCount = data.samples.filter(s=>{ const lr=latestRound(s); return lr&&lr.verdict==='good'; }).length;
   const totalSampleCost = data.samples.reduce((s,x)=>s+(x.rounds||[]).reduce((ss,r)=>ss+n(r.cost),0),0);
-  const totalBulkCost = data.samples.reduce((s,x)=>s+((x.bulk&&x.bulk.ordered)?n(x.bulk.cost):0),0);
+  const totalPrice = data.samples.reduce((s,x)=>s+n(x.price),0);
   const cols = allCollections();
 
   $('page-content').innerHTML = `
+    ${sectionTabsHtml()}
     <div class="filter-bar">
       <input type="text" placeholder="Search name or manufacturer..." value="${esc(f.q)}" oninput="setSampleFilter('q',this.value)"/>
       <select onchange="setSampleFilter('collection',this.value)" style="flex:1;min-width:130px;">
@@ -334,9 +355,9 @@ function renderSamples(){
     </div>
     <div class="stat-grid">
       <div class="stat-card"><div class="stat-label">Items</div><div class="stat-value">${data.samples.length}</div></div>
-      <div class="stat-card"><div class="stat-label">In Bulk Production</div><div class="stat-value">${bulkOrderedCount}</div></div>
+      <div class="stat-card"><div class="stat-label">Approved</div><div class="stat-value">${approvedCount}</div></div>
       <div class="stat-card red"><div class="stat-label">Sample Costs</div><div class="stat-value">${fmt(totalSampleCost)}</div></div>
-      <div class="stat-card red"><div class="stat-label">Bulk Costs</div><div class="stat-value">${fmt(totalBulkCost)}</div></div>
+      <div class="stat-card"><div class="stat-label">Total Price</div><div class="stat-value">${fmt(totalPrice)}</div></div>
     </div>
     ${items.length===0?`<div class="empty"><div class="empty-icon">🧵</div><p>No samples yet.<br/>Tap + Sample to track a manufacturer sample.</p></div>`
     :items.map(s=>{
@@ -349,17 +370,75 @@ function renderSamples(){
         </div>
         <div class="row-item-right">
           <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
+            ${n(s.price)>0?`<span class="amount" style="color:var(--text)">${fmt(s.price)}</span>`:''}
             ${lr?verdictPill(lr.verdict):'<span class="pill amber">No Rounds</span>'}
-            ${bulkPill(s)}
           </div>
           <span style="color:var(--muted)">›</span>
         </div>
       </div>`;
     }).join('')}
-    <div class="storage-note">${db?'☁️ Synced &amp; saved automatically to your Claude account':'💾 Saved in this browser only — open via your Claude artifact link for photo/file uploads and account sync'}</div>
+    ${storageNoteHtml()}
   `;
 }
-function setSampleFilter(key,val){ window._sampleFilter[key]=val; renderSamples(); }
+function setSampleFilter(key,val){ window._sampleFilter[key]=val; renderSamplesList(); }
+
+function renderBulkList(){
+  $('page-title').textContent='Bulk Orders';
+  $('page-sub').textContent=`${data.samples.length} item${data.samples.length!==1?'s':''}`;
+  $('top-action-btn').classList.add('hidden');
+  window._bulkFilter = window._bulkFilter || {q:'', collection:''};
+  const f = window._bulkFilter;
+
+  let items = data.samples.slice();
+  if(f.collection) items = items.filter(s=>s.collection===f.collection);
+  if(f.q){
+    const q = f.q.toLowerCase();
+    items = items.filter(s=>(s.name||'').toLowerCase().includes(q) || (s.manufacturer||'').toLowerCase().includes(q));
+  }
+  items.sort((a,b)=>(b.ts||0)-(a.ts||0));
+
+  const orderedItems = data.samples.filter(s=>s.bulk&&s.bulk.ordered);
+  const totalUnits = orderedItems.reduce((s,x)=>s+n(x.bulk.qty),0);
+  const totalBulkCost = orderedItems.reduce((s,x)=>s+n(x.bulk.cost),0);
+  const notOrderedCount = data.samples.length - orderedItems.length;
+  const cols = allCollections();
+
+  $('page-content').innerHTML = `
+    ${sectionTabsHtml()}
+    <div class="filter-bar">
+      <input type="text" placeholder="Search name or manufacturer..." value="${esc(f.q)}" oninput="setBulkFilter('q',this.value)"/>
+      <select onchange="setBulkFilter('collection',this.value)" style="flex:1;min-width:130px;">
+        <option value="">All Collections</option>
+        ${cols.map(c=>`<option value="${esc(c)}" ${f.collection===c?'selected':''}>${esc(c)}</option>`).join('')}
+      </select>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-label">In Production</div><div class="stat-value">${orderedItems.length}</div></div>
+      <div class="stat-card"><div class="stat-label">Not Ordered Yet</div><div class="stat-value">${notOrderedCount}</div></div>
+      <div class="stat-card"><div class="stat-label">Total Units</div><div class="stat-value">${totalUnits}</div></div>
+      <div class="stat-card red"><div class="stat-label">Bulk Costs</div><div class="stat-value">${fmt(totalBulkCost)}</div></div>
+    </div>
+    ${items.length===0?`<div class="empty"><div class="empty-icon">📦</div><p>No samples yet.<br/>Add a sample first, then manage its bulk order here.</p></div>`
+    :items.map(s=>{
+      const b = s.bulk||{};
+      return `<div class="row-item" style="cursor:pointer;" onclick="navigate('bulk-detail','${s.id}')">
+        ${avatarHtml(s.profilePhotoId,'sm','📦')}
+        <div class="row-item-left">
+          <div class="row-item-name">${esc(s.name)||'Unnamed Sample'}</div>
+          <div class="row-item-sub">${esc(s.manufacturer)||'No manufacturer'}${s.collection?(' · '+esc(s.collection)):''}</div>
+        </div>
+        <div class="row-item-right">
+          <div style="text-align:right;">
+            ${b.ordered?`<div class="amount" style="color:var(--text)">${fmt(b.cost)}</div><div style="font-size:11px;color:var(--muted)">${n(b.qty)||0} pcs</div>`:'<span class="pill amber">Not Ordered</span>'}
+          </div>
+          <span style="color:var(--muted)">›</span>
+        </div>
+      </div>`;
+    }).join('')}
+    ${storageNoteHtml()}
+  `;
+}
+function setBulkFilter(key,val){ window._bulkFilter[key]=val; renderBulkList(); }
 
 function openAddSample(){
   const cols = allCollections();
@@ -375,7 +454,7 @@ function openAddSample(){
 }
 async function saveNewSample(){
   const name = $('sm-name').value;
-  const s = {id:uid(), name, manufacturer:$('sm-mfr').value, collection:$('sm-col').value, profilePhotoId:null, rounds:[], techPacks:[], photos:[], bulk:{ordered:false,orderDate:'',qty:'',cost:'',notes:''}, ts:Date.now()};
+  const s = {id:uid(), name, manufacturer:$('sm-mfr').value, collection:$('sm-col').value, price:'', profilePhotoId:null, rounds:[], techPacks:[], photos:[], bulk:{ordered:false,orderDate:'',qty:'',cost:'',notes:''}, ts:Date.now()};
   data.samples.push(s);
   closeSheet(); toast('Sample added'); navigate('detail', s.id);
   await persistSample(s);
@@ -396,7 +475,7 @@ function renderSampleDetail(){
   const canUpload = filesAvailable();
 
   $('page-content').innerHTML = `
-    <button class="back-btn" onclick="navigate('list')">← Samples &amp; Bulk</button>
+    <button class="back-btn" onclick="navigate('list')">← Samples</button>
 
     <div class="card">
       <div class="card-title">Item Info</div>
@@ -414,10 +493,12 @@ function renderSampleDetail(){
         <div class="input-wrap"><input type="text" value="${esc(s.name||'')}" placeholder="e.g. Heavyweight Hoodie" oninput="updateSample('${s.id}','name',this.value)"/></div></div>
       <div class="field"><label class="field-label">Manufacturer</label>
         <div class="input-wrap"><input type="text" value="${esc(s.manufacturer||'')}" placeholder="e.g. XYZ Textiles" oninput="updateSample('${s.id}','manufacturer',this.value)"/></div></div>
-      <div class="field" style="margin-bottom:0"><label class="field-label">Collection</label>
+      <div class="field"><label class="field-label">Collection</label>
         <div class="input-wrap"><input type="text" list="sm-cols-detail" value="${esc(s.collection||'')}" placeholder="e.g. Fall 2026" oninput="updateSample('${s.id}','collection',this.value)"/></div>
         <datalist id="sm-cols-detail">${cols.map(c=>`<option value="${esc(c)}">`).join('')}</datalist>
       </div>
+      <div class="field" style="margin-bottom:0"><label class="field-label">Sample Price</label>
+        <div class="input-wrap"><input type="number" inputmode="decimal" value="${s.price||''}" placeholder="0.00" oninput="updateSample('${s.id}','price',this.value)"/><span class="input-suffix">€</span></div></div>
     </div>
 
     <div class="card">
@@ -473,6 +554,33 @@ function renderSampleDetail(){
       </div>`:''}
     </div>
 
+    <button class="btn btn-outline" onclick="navigate('bulk-detail','${s.id}')">${s.bulk&&s.bulk.ordered?'📦 View Bulk Order':'📦 Manage Bulk Order'}</button>
+    <div style="height:10px;"></div>
+    <button class="btn btn-red" onclick="deleteSample('${s.id}')">Delete Sample</button>
+  `;
+}
+
+// ── BULK ORDERS (separate section) ────────────────────────────────────────
+function renderBulkDetail(){
+  const s = data.samples.find(x=>x.id===routeExtra);
+  if(!s){ navigate('list'); return; }
+  window._section = 'bulk';
+  $('page-title').textContent=s.name||'Bulk Order';
+  $('page-sub').textContent=s.manufacturer||'No manufacturer set';
+  $('top-action-btn').classList.add('hidden');
+  s.bulk = s.bulk || {ordered:false,orderDate:'',qty:'',cost:'',notes:''};
+
+  $('page-content').innerHTML = `
+    <button class="back-btn" onclick="navigate('list')">← Bulk Orders</button>
+
+    <div class="card" style="display:flex;align-items:center;gap:14px;">
+      ${avatarHtml(s.profilePhotoId,'lg','📦')}
+      <div>
+        <div class="row-item-name" style="font-size:16px;">${esc(s.name)||'Unnamed Sample'}</div>
+        <div class="row-item-sub">${esc(s.manufacturer)||'No manufacturer'}${s.collection?(' · '+esc(s.collection)):''}</div>
+      </div>
+    </div>
+
     <div class="card">
       <div class="card-title">Bulk Order</div>
       <div class="type-tabs">
@@ -492,7 +600,7 @@ function renderSampleDetail(){
       `}
     </div>
 
-    <button class="btn btn-red" onclick="deleteSample('${s.id}')">Delete Sample</button>
+    <button class="btn btn-outline" onclick="navigate('detail','${s.id}')">🧵 View Sample Details</button>
   `;
 }
 async function updateSample(id, field, value){
@@ -519,7 +627,7 @@ async function setBulkOrdered(id, ordered){
   s.bulk = s.bulk || {orderDate:'',qty:'',cost:'',notes:''};
   s.bulk.ordered = ordered;
   if(ordered && !s.bulk.orderDate) s.bulk.orderDate = isoToday();
-  renderSampleDetail();
+  renderBulkDetail();
   await persistSample(s);
 }
 async function updateBulk(id, field, value){

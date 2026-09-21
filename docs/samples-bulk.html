@@ -135,7 +135,7 @@ select{width:100%;border:1.5px solid var(--border);border-radius:12px;padding:14
       <h1 id="page-title">Samples &amp; Bulk</h1>
       <p id="page-sub">Track manufacturer samples and bulk orders</p>
     </div>
-    <button class="top-action hidden" id="top-action-btn" onclick="openAddSample()">+ Sample</button>
+    <button class="top-action hidden" id="top-action-btn" onclick="openAddTop()">+ Sample</button>
   </div>
   <div class="page-inner" id="page-content"><div class="empty"><div class="empty-icon">⏳</div><p>Loading…</p></div></div>
 </div>
@@ -152,7 +152,7 @@ select{width:100%;border:1.5px solid var(--border);border-radius:12px;padding:14
 // this page is opened outside the Claude Artifact runtime.
 const LOCAL_KEY = 'samples_bulk_pipeline_v1';
 let db = null, assetsApi = null;
-let data = { samples: [] };
+let data = { samples: [], bulkOrders: [] };
 let currentView = 'list';
 let routeExtra = null;
 
@@ -167,7 +167,11 @@ async function initCapabilities(){
 function loadLocal(){
   try{
     const raw = localStorage.getItem(LOCAL_KEY);
-    if(raw){ const parsed = JSON.parse(raw); data.samples = Array.isArray(parsed.samples) ? parsed.samples : []; }
+    if(raw){
+      const parsed = JSON.parse(raw);
+      data.samples = Array.isArray(parsed.samples) ? parsed.samples : [];
+      data.bulkOrders = Array.isArray(parsed.bulkOrders) ? parsed.bulkOrders : [];
+    }
   }catch(e){}
 }
 function saveLocal(){ try{ localStorage.setItem(LOCAL_KEY, JSON.stringify(data)); }catch(e){} }
@@ -175,8 +179,9 @@ function saveLocal(){ try{ localStorage.setItem(LOCAL_KEY, JSON.stringify(data))
 async function loadData(){
   if(db){
     try{
-      const snap = await db.collection('samples').get();
-      data.samples = snap.docs.map(d=>Object.assign({id:d.id}, d.data()));
+      const [sSnap, bSnap] = await Promise.all([db.collection('samples').get(), db.collection('bulkOrders').get()]);
+      data.samples = sSnap.docs.map(d=>Object.assign({id:d.id}, d.data()));
+      data.bulkOrders = bSnap.docs.map(d=>Object.assign({id:d.id}, d.data()));
       return;
     }catch(e){}
   }
@@ -195,6 +200,37 @@ async function persistDeleteSample(id){
     catch(e){ toast('Delete failed'); }
   }
   saveLocal();
+}
+async function persistBulkOrder(b){
+  if(db){
+    try{ await db.collection('bulkOrders').doc(b.id).set(JSON.parse(JSON.stringify(b))); return; }
+    catch(e){ toast('Save failed — check connection'); }
+  }
+  saveLocal();
+}
+async function persistDeleteBulkOrder(id){
+  if(db){
+    try{ await db.collection('bulkOrders').doc(id).delete(); return; }
+    catch(e){ toast('Delete failed'); }
+  }
+  saveLocal();
+}
+// One-time migration: bulk info used to live nested inside a sample
+// (sample.bulk). Lift any of that into its own standalone bulkOrders entry
+// so bulk orders can be added independently of a sample.
+async function migrateLegacyBulk(){
+  const withBulk = data.samples.filter(s=>s.bulk!==undefined);
+  if(withBulk.length===0) return;
+  for(const s of withBulk){
+    const b0 = s.bulk||{};
+    if(b0.ordered || b0.qty || b0.cost || b0.notes || b0.orderDate){
+      const b = {id:uid(), name:s.name, manufacturer:s.manufacturer, collection:s.collection, ordered:!!b0.ordered, orderDate:b0.orderDate||'', qty:b0.qty||'', cost:b0.cost||'', notes:b0.notes||'', ts:Date.now()};
+      data.bulkOrders.push(b);
+      await persistBulkOrder(b);
+    }
+    delete s.bulk;
+    await persistSample(s);
+  }
 }
 function blobUrl(assetId){ return assetId ? ('/_blob/'+assetId) : ''; }
 function filesAvailable(){ return !!assetsApi; }
@@ -280,6 +316,7 @@ function render(){
   else renderList();
 }
 function setSection(s){ window._section = s; navigate('list'); }
+function openAddTop(){ if(window._section==='bulk') openAddBulkOrder(); else openAddSample(); }
 function sectionTabsHtml(){
   window._section = window._section || 'samples';
   return `<div class="type-tabs">
@@ -298,17 +335,13 @@ function closeSheet(e){ if(!e || e.target===$('sheet-overlay')) $('sheet-overlay
 function allCollections(){
   const set = new Set();
   data.samples.forEach(s=>{ if(s.collection) set.add(s.collection); });
+  data.bulkOrders.forEach(b=>{ if(b.collection) set.add(b.collection); });
   return Array.from(set).sort();
 }
 function verdictPill(v){
   if(v==='good') return `<span class="pill green">Good</span>`;
   if(v==='bad') return `<span class="pill red">Not Good</span>`;
   return `<span class="pill amber">Pending</span>`;
-}
-function bulkPill(s){
-  const b = s.bulk||{};
-  if(b.ordered) return `<span class="pill green">Bulk · ${n(b.qty)||0} pcs</span>`;
-  return `<span class="pill amber">No Bulk Yet</span>`;
 }
 function latestRound(s){
   const r = s.rounds||[];
@@ -384,23 +417,24 @@ function setSampleFilter(key,val){ window._sampleFilter[key]=val; renderSamplesL
 
 function renderBulkList(){
   $('page-title').textContent='Bulk Orders';
-  $('page-sub').textContent=`${data.samples.length} item${data.samples.length!==1?'s':''}`;
-  $('top-action-btn').classList.add('hidden');
+  $('page-sub').textContent=`${data.bulkOrders.length} item${data.bulkOrders.length!==1?'s':''}`;
+  $('top-action-btn').textContent='+ Bulk';
+  $('top-action-btn').classList.remove('hidden');
   window._bulkFilter = window._bulkFilter || {q:'', collection:''};
   const f = window._bulkFilter;
 
-  let items = data.samples.slice();
-  if(f.collection) items = items.filter(s=>s.collection===f.collection);
+  let items = data.bulkOrders.slice();
+  if(f.collection) items = items.filter(b=>b.collection===f.collection);
   if(f.q){
     const q = f.q.toLowerCase();
-    items = items.filter(s=>(s.name||'').toLowerCase().includes(q) || (s.manufacturer||'').toLowerCase().includes(q));
+    items = items.filter(b=>(b.name||'').toLowerCase().includes(q) || (b.manufacturer||'').toLowerCase().includes(q));
   }
   items.sort((a,b)=>(b.ts||0)-(a.ts||0));
 
-  const orderedItems = data.samples.filter(s=>s.bulk&&s.bulk.ordered);
-  const totalUnits = orderedItems.reduce((s,x)=>s+n(x.bulk.qty),0);
-  const totalBulkCost = orderedItems.reduce((s,x)=>s+n(x.bulk.cost),0);
-  const notOrderedCount = data.samples.length - orderedItems.length;
+  const orderedItems = data.bulkOrders.filter(b=>b.ordered);
+  const totalUnits = orderedItems.reduce((s,x)=>s+n(x.qty),0);
+  const totalBulkCost = orderedItems.reduce((s,x)=>s+n(x.cost),0);
+  const notOrderedCount = data.bulkOrders.length - orderedItems.length;
   const cols = allCollections();
 
   $('page-content').innerHTML = `
@@ -418,14 +452,13 @@ function renderBulkList(){
       <div class="stat-card"><div class="stat-label">Total Units</div><div class="stat-value">${totalUnits}</div></div>
       <div class="stat-card red"><div class="stat-label">Bulk Costs</div><div class="stat-value">${fmt(totalBulkCost)}</div></div>
     </div>
-    ${items.length===0?`<div class="empty"><div class="empty-icon">📦</div><p>No samples yet.<br/>Add a sample first, then manage its bulk order here.</p></div>`
-    :items.map(s=>{
-      const b = s.bulk||{};
-      return `<div class="row-item" style="cursor:pointer;" onclick="navigate('bulk-detail','${s.id}')">
-        ${avatarHtml(s.profilePhotoId,'sm','📦')}
+    ${items.length===0?`<div class="empty"><div class="empty-icon">📦</div><p>No bulk orders yet.<br/>Tap + Bulk to add one.</p></div>`
+    :items.map(b=>{
+      return `<div class="row-item" style="cursor:pointer;" onclick="navigate('bulk-detail','${b.id}')">
+        ${avatarHtml(null,'sm','📦')}
         <div class="row-item-left">
-          <div class="row-item-name">${esc(s.name)||'Unnamed Sample'}</div>
-          <div class="row-item-sub">${esc(s.manufacturer)||'No manufacturer'}${s.collection?(' · '+esc(s.collection)):''}</div>
+          <div class="row-item-name">${esc(b.name)||'Unnamed Bulk Order'}</div>
+          <div class="row-item-sub">${esc(b.manufacturer)||'No manufacturer'}${b.collection?(' · '+esc(b.collection)):''}</div>
         </div>
         <div class="row-item-right">
           <div style="text-align:right;">
@@ -439,6 +472,39 @@ function renderBulkList(){
   `;
 }
 function setBulkFilter(key,val){ window._bulkFilter[key]=val; renderBulkList(); }
+
+function openAddBulkOrder(){
+  const cols = allCollections();
+  $('sheet-content').innerHTML = `
+    <div class="sheet-title">New Bulk Order</div>
+    <div class="field"><label class="field-label">Name</label><div class="input-wrap"><input id="bo-name" type="text" placeholder="e.g. Heavyweight Hoodie"/></div></div>
+    <div class="field"><label class="field-label">Manufacturer</label><div class="input-wrap"><input id="bo-mfr" type="text" placeholder="e.g. XYZ Textiles"/></div></div>
+    <div class="field" style="margin-bottom:0"><label class="field-label">Collection</label><div class="input-wrap"><input id="bo-col" type="text" list="bo-cols" placeholder="e.g. Fall 2026"/></div></div>
+    <datalist id="bo-cols">${cols.map(c=>`<option value="${esc(c)}">`).join('')}</datalist>
+    <button class="btn btn-dark" style="margin-top:14px;" onclick="saveNewBulkOrder()">Save Bulk Order</button>
+  `;
+  showSheet();
+}
+async function saveNewBulkOrder(){
+  const name = $('bo-name').value;
+  const b = {id:uid(), name, manufacturer:$('bo-mfr').value, collection:$('bo-col').value, ordered:false, orderDate:'', qty:'', cost:'', notes:'', ts:Date.now()};
+  data.bulkOrders.push(b);
+  closeSheet(); toast('Bulk order added'); navigate('bulk-detail', b.id);
+  await persistBulkOrder(b);
+}
+async function updateBulkOrder(id, field, value){
+  const b = data.bulkOrders.find(x=>x.id===id); if(!b) return;
+  b[field]=value;
+  clearTimeout(window._bulkOrderRenderTimer);
+  window._bulkOrderRenderTimer = setTimeout(async ()=>{ await persistBulkOrder(b); },600);
+}
+function deleteBulkOrder(id){
+  confirmSheet('Delete this bulk order?', async ()=>{
+    data.bulkOrders = data.bulkOrders.filter(x=>x.id!==id);
+    toast('Bulk order deleted'); navigate('list');
+    await persistDeleteBulkOrder(id);
+  });
+}
 
 function openAddSample(){
   const cols = allCollections();
@@ -454,7 +520,7 @@ function openAddSample(){
 }
 async function saveNewSample(){
   const name = $('sm-name').value;
-  const s = {id:uid(), name, manufacturer:$('sm-mfr').value, collection:$('sm-col').value, price:'', profilePhotoId:null, rounds:[], techPacks:[], photos:[], bulk:{ordered:false,orderDate:'',qty:'',cost:'',notes:''}, ts:Date.now()};
+  const s = {id:uid(), name, manufacturer:$('sm-mfr').value, collection:$('sm-col').value, price:'', profilePhotoId:null, rounds:[], techPacks:[], photos:[], ts:Date.now()};
   data.samples.push(s);
   closeSheet(); toast('Sample added'); navigate('detail', s.id);
   await persistSample(s);
@@ -466,7 +532,6 @@ function renderSampleDetail(){
   $('page-title').textContent=s.name||'Sample';
   $('page-sub').textContent=s.manufacturer||'No manufacturer set';
   $('top-action-btn').classList.add('hidden');
-  s.bulk = s.bulk || {ordered:false,orderDate:'',qty:'',cost:'',notes:''};
   s.techPacks = s.techPacks || [];
   s.photos = s.photos || [];
   const rounds = s.rounds||[];
@@ -554,53 +619,55 @@ function renderSampleDetail(){
       </div>`:''}
     </div>
 
-    <button class="btn btn-outline" onclick="navigate('bulk-detail','${s.id}')">${s.bulk&&s.bulk.ordered?'📦 View Bulk Order':'📦 Manage Bulk Order'}</button>
-    <div style="height:10px;"></div>
     <button class="btn btn-red" onclick="deleteSample('${s.id}')">Delete Sample</button>
   `;
 }
 
-// ── BULK ORDERS (separate section) ────────────────────────────────────────
+// ── BULK ORDERS (separate section, its own standalone entries) ────────────
 function renderBulkDetail(){
-  const s = data.samples.find(x=>x.id===routeExtra);
-  if(!s){ navigate('list'); return; }
+  const b = data.bulkOrders.find(x=>x.id===routeExtra);
+  if(!b){ navigate('list'); return; }
   window._section = 'bulk';
-  $('page-title').textContent=s.name||'Bulk Order';
-  $('page-sub').textContent=s.manufacturer||'No manufacturer set';
+  $('page-title').textContent=b.name||'Bulk Order';
+  $('page-sub').textContent=b.manufacturer||'No manufacturer set';
   $('top-action-btn').classList.add('hidden');
-  s.bulk = s.bulk || {ordered:false,orderDate:'',qty:'',cost:'',notes:''};
+  const cols = allCollections().filter(c=>c!==b.collection);
 
   $('page-content').innerHTML = `
     <button class="back-btn" onclick="navigate('list')">← Bulk Orders</button>
 
-    <div class="card" style="display:flex;align-items:center;gap:14px;">
-      ${avatarHtml(s.profilePhotoId,'lg','📦')}
-      <div>
-        <div class="row-item-name" style="font-size:16px;">${esc(s.name)||'Unnamed Sample'}</div>
-        <div class="row-item-sub">${esc(s.manufacturer)||'No manufacturer'}${s.collection?(' · '+esc(s.collection)):''}</div>
+    <div class="card">
+      <div class="card-title">Item Info</div>
+      <div class="field"><label class="field-label">Name</label>
+        <div class="input-wrap"><input type="text" value="${esc(b.name||'')}" placeholder="e.g. Heavyweight Hoodie" oninput="updateBulkOrder('${b.id}','name',this.value)"/></div></div>
+      <div class="field"><label class="field-label">Manufacturer</label>
+        <div class="input-wrap"><input type="text" value="${esc(b.manufacturer||'')}" placeholder="e.g. XYZ Textiles" oninput="updateBulkOrder('${b.id}','manufacturer',this.value)"/></div></div>
+      <div class="field" style="margin-bottom:0"><label class="field-label">Collection</label>
+        <div class="input-wrap"><input type="text" list="bo-cols-detail" value="${esc(b.collection||'')}" placeholder="e.g. Fall 2026" oninput="updateBulkOrder('${b.id}','collection',this.value)"/></div>
+        <datalist id="bo-cols-detail">${cols.map(c=>`<option value="${esc(c)}">`).join('')}</datalist>
       </div>
     </div>
 
     <div class="card">
       <div class="card-title">Bulk Order</div>
       <div class="type-tabs">
-        <button class="type-tab ${!s.bulk.ordered?'active':''}" onclick="setBulkOrdered('${s.id}',false)">Not Ordered</button>
-        <button class="type-tab ${s.bulk.ordered?'active':''}" onclick="setBulkOrdered('${s.id}',true)">Ordered</button>
+        <button class="type-tab ${!b.ordered?'active':''}" onclick="setBulkOrdered('${b.id}',false)">Not Ordered</button>
+        <button class="type-tab ${b.ordered?'active':''}" onclick="setBulkOrdered('${b.id}',true)">Ordered</button>
       </div>
-      ${!s.bulk.ordered?`<div style="text-align:center;padding:10px 0 4px;color:var(--muted);font-size:13px;">Switch to "Ordered" once you place the bulk order.</div>`
+      ${!b.ordered?`<div style="text-align:center;padding:10px 0 4px;color:var(--muted);font-size:13px;">Switch to "Ordered" once you place the bulk order.</div>`
       :`
       <div class="field"><label class="field-label">Order Date</label>
-        ${dateSelectHtml('bulk-order-'+s.id, s.bulk.orderDate, `onchange="updateBulk('${s.id}','orderDate',readDateSelect('bulk-order-${s.id}'))"`)}</div>
+        ${dateSelectHtml('bulk-order-'+b.id, b.orderDate, `onchange="updateBulk('${b.id}','orderDate',readDateSelect('bulk-order-${b.id}'))"`)}</div>
       <div class="field"><label class="field-label">Quantity</label>
-        <div class="input-wrap"><input type="number" inputmode="decimal" value="${s.bulk.qty||''}" placeholder="e.g. 200" oninput="updateBulk('${s.id}','qty',this.value)"/><span class="input-suffix">pcs</span></div></div>
+        <div class="input-wrap"><input type="number" inputmode="decimal" value="${b.qty||''}" placeholder="e.g. 200" oninput="updateBulk('${b.id}','qty',this.value)"/><span class="input-suffix">pcs</span></div></div>
       <div class="field"><label class="field-label">Bulk Cost</label>
-        <div class="input-wrap"><input type="number" inputmode="decimal" value="${s.bulk.cost||''}" placeholder="0.00" oninput="updateBulk('${s.id}','cost',this.value)"/><span class="input-suffix">€</span></div></div>
+        <div class="input-wrap"><input type="number" inputmode="decimal" value="${b.cost||''}" placeholder="0.00" oninput="updateBulk('${b.id}','cost',this.value)"/><span class="input-suffix">€</span></div></div>
       <div class="field" style="margin-bottom:0"><label class="field-label">Notes</label>
-        <div class="input-wrap"><input type="text" value="${esc(s.bulk.notes||'')}" placeholder="e.g. supplier, lead time..." oninput="updateBulk('${s.id}','notes',this.value)"/></div></div>
+        <div class="input-wrap"><input type="text" value="${esc(b.notes||'')}" placeholder="e.g. supplier, lead time..." oninput="updateBulk('${b.id}','notes',this.value)"/></div></div>
       `}
     </div>
 
-    <button class="btn btn-outline" onclick="navigate('detail','${s.id}')">🧵 View Sample Details</button>
+    <button class="btn btn-red" onclick="deleteBulkOrder('${b.id}')">Delete Bulk Order</button>
   `;
 }
 async function updateSample(id, field, value){
@@ -623,19 +690,17 @@ function deleteSample(id){
   });
 }
 async function setBulkOrdered(id, ordered){
-  const s = data.samples.find(x=>x.id===id); if(!s) return;
-  s.bulk = s.bulk || {orderDate:'',qty:'',cost:'',notes:''};
-  s.bulk.ordered = ordered;
-  if(ordered && !s.bulk.orderDate) s.bulk.orderDate = isoToday();
+  const b = data.bulkOrders.find(x=>x.id===id); if(!b) return;
+  b.ordered = ordered;
+  if(ordered && !b.orderDate) b.orderDate = isoToday();
   renderBulkDetail();
-  await persistSample(s);
+  await persistBulkOrder(b);
 }
 async function updateBulk(id, field, value){
-  const s = data.samples.find(x=>x.id===id); if(!s) return;
-  s.bulk = s.bulk || {ordered:true,orderDate:'',qty:'',cost:'',notes:''};
-  s.bulk[field]=value;
+  const b = data.bulkOrders.find(x=>x.id===id); if(!b) return;
+  b[field]=value;
   clearTimeout(window._bulkRenderTimer);
-  window._bulkRenderTimer = setTimeout(async ()=>{ await persistSample(s); },600);
+  window._bulkRenderTimer = setTimeout(async ()=>{ await persistBulkOrder(b); },600);
 }
 
 // ── PROFILE PHOTO ───────────────────────────────────────────────────────────
@@ -821,6 +886,7 @@ function deleteRound(sampleId, roundId){
 (async function init(){
   await initCapabilities();
   await loadData();
+  await migrateLegacyBulk();
   render();
 })();
 </script>

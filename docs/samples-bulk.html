@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<meta name="apple-mobile-web-app-title" content="Samples"/>
+<meta name="theme-color" content="#0a0a0a"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<title>Samples &amp; Bulk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;}
+:root{
+  --bg:#f5f4f0;--card:#ffffff;--border:#e8e6e0;--text:#0a0a0a;--muted:#a0998a;
+  --dark:#0a0a0a;--dark-fg:#ffffff;--green:#16a34a;--green-bg:#f0fdf4;
+  --red:#dc2626;--red-bg:#fef2f2;--amber:#d97706;--amber-bg:#fffbeb;
+  --r:18px;--font:'DM Sans',sans-serif;--serif:'Playfair Display',serif;
+}
+html,body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--text);}
+.wrap{max-width:640px;margin:0 auto;padding:0 0 80px;}
+.topbar{padding:32px 20px 16px;background:var(--bg);display:flex;align-items:flex-end;justify-content:space-between;border-bottom:1px solid var(--border);gap:10px;position:sticky;top:0;z-index:10;}
+.topbar-left h1{font-family:var(--serif);font-size:24px;font-weight:900;letter-spacing:-0.03em;line-height:1.1;}
+.topbar-left p{font-size:12px;color:var(--muted);margin-top:4px;}
+.top-action{background:var(--dark);color:var(--dark-fg);border:none;border-radius:50px;padding:10px 18px;font-size:13px;font-weight:600;font-family:var(--font);cursor:pointer;white-space:nowrap;min-height:44px;display:flex;align-items:center;flex-shrink:0;}
+.top-action.hidden{display:none;}
+
+.page-inner{padding:16px 20px 24px;}
+@media (min-width:640px){ .page-inner{padding:24px 0; } .topbar{padding:32px 0 16px;} }
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:12px;}
+.card-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:14px;}
+
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;}
+.stat-card.red{background:var(--red-bg);border-color:#fecaca;}
+.stat-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;}
+.stat-value{font-family:var(--serif);font-size:22px;font-weight:700;line-height:1;color:var(--text);}
+.stat-card.red .stat-value{color:var(--red);}
+
+.field{margin-bottom:14px;}
+.field-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;display:block;}
+.input-wrap{display:flex;align-items:center;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color 0.15s;}
+.input-wrap:focus-within{border-color:var(--dark);}
+.input-suffix{padding:0 12px;font-size:15px;color:var(--muted);font-weight:500;}
+.input-wrap input[type=text],.input-wrap input[type=number],.input-wrap input[type=date]{flex:1;border:none;background:transparent;padding:14px 14px;font-size:15px;color:var(--text);font-family:var(--font);outline:none;min-height:48px;min-width:0;}
+.input-wrap input::placeholder{color:#ccc;}
+select{width:100%;border:1.5px solid var(--border);border-radius:12px;padding:14px;font-size:15px;color:var(--text);font-family:var(--font);background:var(--bg);outline:none;min-height:48px;-webkit-appearance:none;appearance:none;}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:14px;padding:15px 20px;font-size:15px;font-weight:600;font-family:var(--font);cursor:pointer;min-height:52px;width:100%;transition:opacity 0.15s,transform 0.1s;}
+.btn:active{opacity:0.85;transform:scale(0.98);}
+.btn-dark{background:var(--dark);color:#fff;}
+.btn-outline{background:transparent;color:var(--text);border:1.5px solid var(--border);}
+.btn-red{background:var(--red-bg);color:var(--red);border:1.5px solid #fecaca;}
+.btn-sm{min-height:38px;padding:8px 14px;font-size:13px;border-radius:10px;width:auto;}
+
+.row-item{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:8px;gap:10px;}
+.row-item-left{flex:1;min-width:0;}
+.row-item-name{font-size:14px;font-weight:600;color:var(--text);}
+.row-item-sub{font-size:12px;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.row-item-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.amount{font-size:15px;font-weight:700;}
+
+.pill{display:inline-flex;align-items:center;padding:4px 10px;border-radius:50px;font-size:11px;font-weight:600;}
+.pill.green{background:var(--green-bg);color:var(--green);}
+.pill.red{background:var(--red-bg);color:var(--red);}
+.pill.amber{background:var(--amber-bg);color:var(--amber);}
+
+.divider{height:1px;background:var(--border);margin:14px 0;}
+.del-btn{background:none;border:none;color:#ccc;font-size:18px;cursor:pointer;padding:6px;min-width:32px;min-height:32px;display:flex;align-items:center;justify-content:center;}
+
+.sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:flex-end;justify-content:center;}
+.sheet-overlay.hidden{display:none;}
+.sheet{background:var(--card);border-radius:24px 24px 0 0;width:100%;max-width:460px;padding:20px 20px calc(28px + env(safe-area-inset-bottom, 12px));max-height:88vh;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.sheet-handle{width:40px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 18px;}
+.sheet-title{font-family:var(--serif);font-size:22px;font-weight:700;margin-bottom:18px;}
+
+.empty{text-align:center;padding:48px 20px;color:var(--muted);}
+.empty-icon{font-size:40px;margin-bottom:12px;}
+.empty p{font-size:14px;}
+
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px;}
+.section-head h2{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;}
+
+.back-btn{display:flex;align-items:center;gap:6px;background:none;border:none;font-size:14px;color:var(--muted);font-family:var(--font);cursor:pointer;padding:0;margin-bottom:16px;}
+
+.filter-bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}
+.filter-bar input[type=text]{border:1.5px solid var(--border);border-radius:10px;padding:9px 12px;font-size:13px;font-family:var(--font);background:var(--card);outline:none;flex:1;min-width:130px;}
+
+.type-tabs{display:flex;gap:6px;background:var(--bg);padding:4px;border-radius:12px;margin-bottom:16px;}
+.type-tab{flex:1;padding:9px 4px;border:none;background:none;border-radius:9px;font-size:12.5px;font-weight:600;color:var(--muted);font-family:var(--font);cursor:pointer;}
+.type-tab.active{background:var(--dark);color:#fff;}
+
+#sb-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;padding:9px 18px;border-radius:50px;font-size:12px;font-family:var(--font);font-weight:500;z-index:500;opacity:0;transition:opacity 0.25s;pointer-events:none;white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,0.25);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1 id="page-title">Samples &amp; Bulk</h1>
+      <p id="page-sub">Track manufacturer samples and bulk orders</p>
+    </div>
+    <button class="top-action hidden" id="top-action-btn" onclick="openAddSample()">+ Sample</button>
+  </div>
+  <div class="page-inner" id="page-content"></div>
+</div>
+
+<div class="sheet-overlay hidden" id="sheet-overlay" onclick="closeSheet(event)">
+  <div class="sheet" id="sheet"><div class="sheet-handle"></div><div id="sheet-content"></div></div>
+</div>
+
+<script>
+// ── DATA MODEL ─────────────────────────────────────────────────────────────
+const KEY = 'samples_bulk_pipeline_v1';
+let data = null;
+let currentView = 'list';
+let routeExtra = null;
+
+function defaultData(){ return { samples:[] }; }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(data)); }catch(e){} }
+function load(){
+  data = defaultData();
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(raw){
+      const d = JSON.parse(raw);
+      data = { samples: Array.isArray(d.samples) ? d.samples : [] };
+    }
+  }catch(e){}
+}
+
+// ── HELPERS ─────────────────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const n = v => parseFloat(v)||0;
+const fmt = v => n(v).toLocaleString('de-AT', {style:'currency', currency:'EUR'});
+const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const isoToday = () => new Date().toISOString().slice(0,10);
+function fmtDateShort(iso){ if(!iso) return ''; const d=new Date(iso+'T00:00:00'); if(isNaN(d)) return iso; return d.toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
+let toastTimer;
+function toast(msg){
+  let t = $('sb-toast');
+  if(!t){ t=document.createElement('div'); t.id='sb-toast'; document.body.appendChild(t); }
+  t.textContent = '✓ '+msg;
+  t.style.opacity='1';
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{ t.style.opacity='0'; }, 1600);
+}
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+function navigate(view, extra){
+  currentView = view;
+  routeExtra = extra||null;
+  render();
+  window.scrollTo(0,0);
+}
+function render(){ if(currentView==='detail') renderSampleDetail(); else renderSamples(); }
+function showSheet(){ $('sheet-overlay').classList.remove('hidden'); }
+function closeSheet(e){ if(!e || e.target===$('sheet-overlay')) $('sheet-overlay').classList.add('hidden'); }
+
+// ── SAMPLES & BULK ─────────────────────────────────────────────────────────
+function allCollections(){
+  const set = new Set();
+  data.samples.forEach(s=>{ if(s.collection) set.add(s.collection); });
+  return Array.from(set).sort();
+}
+function verdictPill(v){
+  if(v==='good') return `<span class="pill green">Good</span>`;
+  if(v==='bad') return `<span class="pill red">Not Good</span>`;
+  return `<span class="pill amber">Pending</span>`;
+}
+function bulkPill(s){
+  const b = s.bulk||{};
+  if(b.ordered) return `<span class="pill green">Bulk · ${n(b.qty)||0} pcs</span>`;
+  return `<span class="pill amber">No Bulk Yet</span>`;
+}
+function latestRound(s){
+  const r = s.rounds||[];
+  return r.length ? r[r.length-1] : null;
+}
+
+function renderSamples(){
+  $('page-title').textContent='Samples & Bulk';
+  $('page-sub').textContent=`${data.samples.length} item${data.samples.length!==1?'s':''}`;
+  $('top-action-btn').classList.remove('hidden');
+  window._sampleFilter = window._sampleFilter || {q:'', collection:''};
+  const f = window._sampleFilter;
+
+  let items = data.samples.slice();
+  if(f.collection) items = items.filter(s=>s.collection===f.collection);
+  if(f.q){
+    const q = f.q.toLowerCase();
+    items = items.filter(s=>(s.name||'').toLowerCase().includes(q) || (s.manufacturer||'').toLowerCase().includes(q));
+  }
+  items.sort((a,b)=>(b.ts||0)-(a.ts||0));
+
+  const bulkOrderedCount = data.samples.filter(s=>s.bulk&&s.bulk.ordered).length;
+  const totalSampleCost = data.samples.reduce((s,x)=>s+(x.rounds||[]).reduce((ss,r)=>ss+n(r.cost),0),0);
+  const totalBulkCost = data.samples.reduce((s,x)=>s+((x.bulk&&x.bulk.ordered)?n(x.bulk.cost):0),0);
+  const cols = allCollections();
+
+  $('page-content').innerHTML = `
+    <div class="filter-bar">
+      <input type="text" placeholder="Search name or manufacturer..." value="${esc(f.q)}" oninput="setSampleFilter('q',this.value)"/>
+      <select onchange="setSampleFilter('collection',this.value)" style="flex:1;min-width:130px;">
+        <option value="">All Collections</option>
+        ${cols.map(c=>`<option value="${esc(c)}" ${f.collection===c?'selected':''}>${esc(c)}</option>`).join('')}
+      </select>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-label">Items</div><div class="stat-value">${data.samples.length}</div></div>
+      <div class="stat-card"><div class="stat-label">In Bulk Production</div><div class="stat-value">${bulkOrderedCount}</div></div>
+      <div class="stat-card red"><div class="stat-label">Sample Costs</div><div class="stat-value">${fmt(totalSampleCost)}</div></div>
+      <div class="stat-card red"><div class="stat-label">Bulk Costs</div><div class="stat-value">${fmt(totalBulkCost)}</div></div>
+    </div>
+    ${items.length===0?`<div class="empty"><div class="empty-icon">🧵</div><p>No samples yet.<br/>Tap + Sample to track a manufacturer sample.</p></div>`
+    :items.map(s=>{
+      const lr = latestRound(s);
+      return `<div class="row-item" style="cursor:pointer;" onclick="navigate('detail','${s.id}')">
+        <div class="row-item-left">
+          <div class="row-item-name">${esc(s.name)||'Unnamed Sample'}</div>
+          <div class="row-item-sub">${esc(s.manufacturer)||'No manufacturer'}${s.collection?(' · '+esc(s.collection)):''}${lr?(' · '+fmtDateShort(lr.orderDate)):''}</div>
+        </div>
+        <div class="row-item-right">
+          <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
+            ${lr?verdictPill(lr.verdict):'<span class="pill amber">No Rounds</span>'}
+            ${bulkPill(s)}
+          </div>
+          <span style="color:var(--muted)">›</span>
+        </div>
+      </div>`;
+    }).join('')}
+  `;
+}
+function setSampleFilter(key,val){ window._sampleFilter[key]=val; renderSamples(); }
+
+function openAddSample(){
+  const cols = allCollections();
+  $('sheet-content').innerHTML = `
+    <div class="sheet-title">New Sample</div>
+    <div class="field"><label class="field-label">Name</label><div class="input-wrap"><input id="sm-name" type="text" placeholder="e.g. Heavyweight Hoodie"/></div></div>
+    <div class="field"><label class="field-label">Manufacturer</label><div class="input-wrap"><input id="sm-mfr" type="text" placeholder="e.g. XYZ Textiles"/></div></div>
+    <div class="field" style="margin-bottom:0"><label class="field-label">Collection</label><div class="input-wrap"><input id="sm-col" type="text" list="sm-cols" placeholder="e.g. Fall 2026"/></div></div>
+    <datalist id="sm-cols">${cols.map(c=>`<option value="${esc(c)}">`).join('')}</datalist>
+    <button class="btn btn-dark" style="margin-top:14px;" onclick="saveNewSample()">Save Sample</button>
+  `;
+  showSheet();
+}
+function saveNewSample(){
+  const name = $('sm-name').value;
+  const s = {id:uid(), name, manufacturer:$('sm-mfr').value, collection:$('sm-col').value, rounds:[], bulk:{ordered:false,orderDate:'',qty:'',cost:'',notes:''}, ts:Date.now()};
+  data.samples.push(s); save(); closeSheet(); toast('Sample added'); navigate('detail', s.id);
+}
+
+function renderSampleDetail(){
+  const s = data.samples.find(x=>x.id===routeExtra);
+  if(!s){ navigate('list'); return; }
+  $('page-title').textContent=s.name||'Sample';
+  $('page-sub').textContent=s.manufacturer||'No manufacturer set';
+  $('top-action-btn').classList.add('hidden');
+  s.bulk = s.bulk || {ordered:false,orderDate:'',qty:'',cost:'',notes:''};
+  const rounds = s.rounds||[];
+  const cols = allCollections().filter(c=>c!==s.collection);
+  const totalRoundCost = rounds.reduce((sum,r)=>sum+n(r.cost),0);
+
+  $('page-content').innerHTML = `
+    <button class="back-btn" onclick="navigate('list')">← Samples &amp; Bulk</button>
+
+    <div class="card">
+      <div class="card-title">Item Info</div>
+      <div class="field"><label class="field-label">Name</label>
+        <div class="input-wrap"><input type="text" value="${esc(s.name||'')}" placeholder="e.g. Heavyweight Hoodie" oninput="updateSample('${s.id}','name',this.value)"/></div></div>
+      <div class="field"><label class="field-label">Manufacturer</label>
+        <div class="input-wrap"><input type="text" value="${esc(s.manufacturer||'')}" placeholder="e.g. XYZ Textiles" oninput="updateSample('${s.id}','manufacturer',this.value)"/></div></div>
+      <div class="field" style="margin-bottom:0"><label class="field-label">Collection</label>
+        <div class="input-wrap"><input type="text" list="sm-cols-detail" value="${esc(s.collection||'')}" placeholder="e.g. Fall 2026" oninput="updateSample('${s.id}','collection',this.value)"/></div>
+        <datalist id="sm-cols-detail">${cols.map(c=>`<option value="${esc(c)}">`).join('')}</datalist>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-head"><div class="card-title" style="margin-bottom:0">Sample Rounds</div><button class="btn btn-dark btn-sm" onclick="openAddRound('${s.id}')">+ Round</button></div>
+      ${rounds.length===0?`<div style="text-align:center;padding:16px;color:var(--muted);font-size:13px;">No sample rounds yet. Log the 1st sample you ordered from this manufacturer.</div>`
+      :rounds.map((r,i)=>`
+        <div class="row-item" style="cursor:pointer;" onclick="openAddRound('${s.id}','${r.id}')">
+          <div class="row-item-left">
+            <div class="row-item-name">Round ${i+1} ${verdictPill(r.verdict)}</div>
+            <div class="row-item-sub">Ordered ${fmtDateShort(r.orderDate)}${r.sampleDate?(' · Received '+fmtDateShort(r.sampleDate)):''}${r.notes?(' · '+esc(r.notes)):''}</div>
+          </div>
+          <div class="row-item-right">
+            <span class="amount" style="color:var(--text)">${fmt(r.cost)}</span>
+            <button class="del-btn" onclick="event.stopPropagation();deleteRound('${s.id}','${r.id}')">✕</button>
+          </div>
+        </div>`).join('')}
+      ${rounds.length>0?`<div class="divider"></div>
+      <div style="display:flex;justify-content:space-between;">
+        <span style="font-size:13px;color:var(--muted)">Total sample costs</span>
+        <span style="font-size:15px;font-weight:700;">${fmt(totalRoundCost)}</span>
+      </div>`:''}
+    </div>
+
+    <div class="card">
+      <div class="card-title">Bulk Order</div>
+      <div class="type-tabs">
+        <button class="type-tab ${!s.bulk.ordered?'active':''}" onclick="setBulkOrdered('${s.id}',false)">Not Ordered</button>
+        <button class="type-tab ${s.bulk.ordered?'active':''}" onclick="setBulkOrdered('${s.id}',true)">Ordered</button>
+      </div>
+      ${!s.bulk.ordered?`<div style="text-align:center;padding:10px 0 4px;color:var(--muted);font-size:13px;">Switch to "Ordered" once you place the bulk order.</div>`
+      :`
+      <div class="field"><label class="field-label">Order Date</label>
+        <div class="input-wrap"><input type="date" value="${s.bulk.orderDate||''}" onchange="updateBulk('${s.id}','orderDate',this.value)"/></div></div>
+      <div class="field"><label class="field-label">Quantity</label>
+        <div class="input-wrap"><input type="number" inputmode="decimal" value="${s.bulk.qty||''}" placeholder="e.g. 200" oninput="updateBulk('${s.id}','qty',this.value)"/><span class="input-suffix">pcs</span></div></div>
+      <div class="field"><label class="field-label">Bulk Cost</label>
+        <div class="input-wrap"><input type="number" inputmode="decimal" value="${s.bulk.cost||''}" placeholder="0.00" oninput="updateBulk('${s.id}','cost',this.value)"/><span class="input-suffix">€</span></div></div>
+      <div class="field" style="margin-bottom:0"><label class="field-label">Notes</label>
+        <div class="input-wrap"><input type="text" value="${esc(s.bulk.notes||'')}" placeholder="e.g. supplier, lead time..." oninput="updateBulk('${s.id}','notes',this.value)"/></div></div>
+      `}
+    </div>
+
+    <button class="btn btn-red" onclick="deleteSample('${s.id}')">Delete Sample</button>
+  `;
+}
+function updateSample(id, field, value){
+  const s = data.samples.find(x=>x.id===id); if(!s) return;
+  s[field]=value; save();
+  clearTimeout(window._sampleRenderTimer);
+  window._sampleRenderTimer = setTimeout(()=>{ if(routeExtra===id) renderSampleDetail(); },600);
+}
+function deleteSample(id){
+  if(!confirm('Delete this sample and all its rounds and bulk order info?')) return;
+  data.samples = data.samples.filter(x=>x.id!==id);
+  save(); toast('Sample deleted'); navigate('list');
+}
+function setBulkOrdered(id, ordered){
+  const s = data.samples.find(x=>x.id===id); if(!s) return;
+  s.bulk = s.bulk || {orderDate:'',qty:'',cost:'',notes:''};
+  s.bulk.ordered = ordered;
+  save(); renderSampleDetail();
+}
+function updateBulk(id, field, value){
+  const s = data.samples.find(x=>x.id===id); if(!s) return;
+  s.bulk = s.bulk || {ordered:true,orderDate:'',qty:'',cost:'',notes:''};
+  s.bulk[field]=value; save();
+  clearTimeout(window._bulkRenderTimer);
+  window._bulkRenderTimer = setTimeout(()=>{ if(routeExtra===id) renderSampleDetail(); },600);
+}
+
+function openAddRound(sampleId, roundId){
+  const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
+  const existing = roundId ? (s.rounds||[]).find(r=>r.id===roundId) : null;
+  window._roundVerdict = existing ? existing.verdict : 'pending';
+  renderRoundSheet(sampleId, roundId, existing);
+  showSheet();
+}
+function setRoundVerdict(sampleId, roundId, v){
+  window._roundVerdict = v;
+  const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
+  const existing = roundId ? (s.rounds||[]).find(r=>r.id===roundId) : null;
+  const draft = {
+    orderDate: $('rd-order') ? $('rd-order').value : '',
+    sampleDate: $('rd-recv') ? $('rd-recv').value : '',
+    cost: $('rd-cost') ? $('rd-cost').value : '',
+    notes: $('rd-notes') ? $('rd-notes').value : ''
+  };
+  renderRoundSheet(sampleId, roundId, existing, draft);
+}
+function renderRoundSheet(sampleId, roundId, existing, draft){
+  const v = window._roundVerdict||'pending';
+  const orderDate = draft ? draft.orderDate : ((existing&&existing.orderDate)||isoToday());
+  const sampleDate = draft ? draft.sampleDate : ((existing&&existing.sampleDate)||'');
+  const cost = draft ? draft.cost : ((existing&&existing.cost)||'');
+  const notes = draft ? draft.notes : ((existing&&existing.notes)||'');
+  $('sheet-content').innerHTML = `
+    <div class="sheet-title">${existing?'Edit':'New'} Sample Round</div>
+    <div class="field"><label class="field-label">Order Date</label>
+      <div class="input-wrap"><input id="rd-order" type="date" value="${orderDate}"/></div></div>
+    <div class="field"><label class="field-label">Sample Received</label>
+      <div class="input-wrap"><input id="rd-recv" type="date" value="${sampleDate}"/></div></div>
+    <div class="field"><label class="field-label">Verdict — Was It Good?</label>
+      <div class="type-tabs">
+        <button class="type-tab ${v==='good'?'active':''}" onclick="setRoundVerdict('${sampleId}','${roundId||''}','good')">Good</button>
+        <button class="type-tab ${v==='bad'?'active':''}" onclick="setRoundVerdict('${sampleId}','${roundId||''}','bad')">Not Good</button>
+        <button class="type-tab ${v==='pending'?'active':''}" onclick="setRoundVerdict('${sampleId}','${roundId||''}','pending')">Pending</button>
+      </div>
+    </div>
+    <div class="field"><label class="field-label">Cost</label>
+      <div class="input-wrap"><input id="rd-cost" type="number" inputmode="decimal" value="${cost}" placeholder="0.00"/><span class="input-suffix">€</span></div></div>
+    <div class="field" style="margin-bottom:0"><label class="field-label">Notes</label>
+      <div class="input-wrap"><input id="rd-notes" type="text" value="${esc(notes)}" placeholder="e.g. fabric was off, fit good..."/></div></div>
+    <button class="btn btn-dark" style="margin-top:14px;" onclick="saveRound('${sampleId}','${roundId||''}')">${existing?'Save Changes':'Add Round'}</button>
+  `;
+}
+function saveRound(sampleId, roundId){
+  const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
+  s.rounds = s.rounds||[];
+  const rec = {
+    id: roundId||uid(),
+    orderDate: $('rd-order').value||isoToday(),
+    sampleDate: $('rd-recv').value||'',
+    verdict: window._roundVerdict||'pending',
+    cost: $('rd-cost').value,
+    notes: $('rd-notes').value
+  };
+  if(roundId){
+    const idx = s.rounds.findIndex(r=>r.id===roundId);
+    if(idx>-1) s.rounds[idx]=rec; else s.rounds.push(rec);
+  } else {
+    s.rounds.push(rec);
+  }
+  save(); closeSheet(); toast(roundId?'Round updated':'Round added'); navigate('detail', sampleId);
+}
+function deleteRound(sampleId, roundId){
+  if(!confirm('Delete this sample round?')) return;
+  const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
+  s.rounds = (s.rounds||[]).filter(r=>r.id!==roundId);
+  save(); toast('Round deleted'); navigate('detail', sampleId);
+}
+
+// ── INIT ────────────────────────────────────────────────────────────────────
+load();
+render();
+</script>
+</body>
+</html>

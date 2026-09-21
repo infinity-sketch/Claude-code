@@ -16,8 +16,20 @@
 :root{
   --bg:#f5f4f0;--card:#ffffff;--border:#e8e6e0;--text:#0a0a0a;--muted:#a0998a;
   --dark:#0a0a0a;--dark-fg:#ffffff;--green:#16a34a;--green-bg:#f0fdf4;
-  --red:#dc2626;--red-bg:#fef2f2;--amber:#d97706;--amber-bg:#fffbeb;
+  --red:#dc2626;--red-bg:#fef2f2;--red-border:#fecaca;--amber:#d97706;--amber-bg:#fffbeb;
   --r:18px;--font:'DM Sans',sans-serif;--serif:'Playfair Display',serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#171510;--card:#221f19;--border:#3a3428;--text:#f2ede2;--muted:#9c9284;
+    --dark:#f2ede2;--dark-fg:#171510;--green:#4ade80;--green-bg:#122c1c;
+    --red:#f87171;--red-bg:#3f1d1d;--red-border:#5c2b2b;--amber:#fbbf24;--amber-bg:#3f2e0c;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#171510;--card:#221f19;--border:#3a3428;--text:#f2ede2;--muted:#9c9284;
+  --dark:#f2ede2;--dark-fg:#171510;--green:#4ade80;--green-bg:#122c1c;
+  --red:#f87171;--red-bg:#3f1d1d;--red-border:#5c2b2b;--amber:#fbbf24;--amber-bg:#3f2e0c;
 }
 html,body{min-height:100%;background:var(--bg);font-family:var(--font);color:var(--text);}
 .wrap{max-width:640px;margin:0 auto;padding:0 0 80px;}
@@ -35,7 +47,7 @@ html,body{min-height:100%;background:var(--bg);font-family:var(--font);color:var
 
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
 .stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;}
-.stat-card.red{background:var(--red-bg);border-color:#fecaca;}
+.stat-card.red{background:var(--red-bg);border-color:var(--red-border);}
 .stat-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;}
 .stat-value{font-family:var(--serif);font-size:22px;font-weight:700;line-height:1;color:var(--text);}
 .stat-card.red .stat-value{color:var(--red);}
@@ -46,14 +58,18 @@ html,body{min-height:100%;background:var(--bg);font-family:var(--font);color:var
 .input-wrap:focus-within{border-color:var(--dark);}
 .input-suffix{padding:0 12px;font-size:15px;color:var(--muted);font-weight:500;}
 .input-wrap input[type=text],.input-wrap input[type=number],.input-wrap input[type=date]{flex:1;border:none;background:transparent;padding:14px 14px;font-size:15px;color:var(--text);font-family:var(--font);outline:none;min-height:48px;min-width:0;}
+.input-wrap input[type=file]{flex:1;padding:12px 14px;font-size:13px;font-family:var(--font);color:var(--text);}
 .input-wrap input::placeholder{color:#ccc;}
+.input-wrap input[type=date]{cursor:pointer;}
+.input-wrap input[type=date]::-webkit-calendar-picker-indicator{cursor:pointer;opacity:0.75;padding:4px;}
 select{width:100%;border:1.5px solid var(--border);border-radius:12px;padding:14px;font-size:15px;color:var(--text);font-family:var(--font);background:var(--bg);outline:none;min-height:48px;-webkit-appearance:none;appearance:none;}
 
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:14px;padding:15px 20px;font-size:15px;font-weight:600;font-family:var(--font);cursor:pointer;min-height:52px;width:100%;transition:opacity 0.15s,transform 0.1s;}
 .btn:active{opacity:0.85;transform:scale(0.98);}
+.btn:disabled{opacity:0.5;cursor:default;}
 .btn-dark{background:var(--dark);color:#fff;}
 .btn-outline{background:transparent;color:var(--text);border:1.5px solid var(--border);}
-.btn-red{background:var(--red-bg);color:var(--red);border:1.5px solid #fecaca;}
+.btn-red{background:var(--red-bg);color:var(--red);border:1.5px solid var(--red-border);}
 .btn-sm{min-height:38px;padding:8px 14px;font-size:13px;border-radius:10px;width:auto;}
 
 .row-item{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:8px;gap:10px;}
@@ -93,6 +109,22 @@ select{width:100%;border:1.5px solid var(--border);border-radius:12px;padding:14
 .type-tab{flex:1;padding:9px 4px;border:none;background:none;border-radius:9px;font-size:12.5px;font-weight:600;color:var(--muted);font-family:var(--font);cursor:pointer;}
 .type-tab.active{background:var(--dark);color:#fff;}
 
+.avatar{border-radius:14px;overflow:hidden;background:var(--bg);border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.avatar img{width:100%;height:100%;object-fit:cover;display:block;}
+.avatar-lg{width:64px;height:64px;font-size:24px;color:var(--muted);}
+.avatar-sm{width:44px;height:44px;font-size:16px;color:var(--muted);border-radius:10px;}
+
+.hidden-file-input{display:none;}
+
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.photo-tile{position:relative;border-radius:12px;overflow:hidden;background:var(--bg);border:1px solid var(--border);cursor:pointer;}
+.photo-tile img{width:100%;aspect-ratio:1;object-fit:cover;display:block;}
+.photo-note{font-size:10.5px;color:var(--muted);padding:5px 6px 7px;line-height:1.3;max-height:2.6em;overflow:hidden;}
+.photo-tile .ph-del{position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.55);color:#fff;border:none;border-radius:50%;width:22px;height:22px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+
+.muted-note{font-size:12.5px;color:var(--muted);text-align:center;padding:10px 4px;line-height:1.5;}
+.storage-note{font-size:11px;color:var(--muted);text-align:center;margin-top:18px;display:flex;align-items:center;justify-content:center;gap:6px;}
+
 #sb-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;padding:9px 18px;border-radius:50px;font-size:12px;font-family:var(--font);font-weight:500;z-index:500;opacity:0;transition:opacity 0.25s;pointer-events:none;white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,0.25);}
 </style>
 </head>
@@ -105,7 +137,7 @@ select{width:100%;border:1.5px solid var(--border);border-radius:12px;padding:14
     </div>
     <button class="top-action hidden" id="top-action-btn" onclick="openAddSample()">+ Sample</button>
   </div>
-  <div class="page-inner" id="page-content"></div>
+  <div class="page-inner" id="page-content"><div class="empty"><div class="empty-icon">⏳</div><p>Loading…</p></div></div>
 </div>
 
 <div class="sheet-overlay hidden" id="sheet-overlay" onclick="closeSheet(event)">
@@ -113,23 +145,71 @@ select{width:100%;border:1.5px solid var(--border);border-radius:12px;padding:14
 </div>
 
 <script>
-// ── DATA MODEL ─────────────────────────────────────────────────────────────
-const KEY = 'samples_bulk_pipeline_v1';
-let data = null;
+// ── STORAGE BACKEND ────────────────────────────────────────────────────────
+// Primary: the Artifact "db" + "assets" capabilities (synced to your Claude
+// account, no size limits worth worrying about for this use case). Falls
+// back to plain browser localStorage (text data only, no file uploads) when
+// this page is opened outside the Claude Artifact runtime.
+const LOCAL_KEY = 'samples_bulk_pipeline_v1';
+let db = null, assetsApi = null;
+let data = { samples: [] };
 let currentView = 'list';
 let routeExtra = null;
 
-function defaultData(){ return { samples:[] }; }
-function save(){ try{ localStorage.setItem(KEY, JSON.stringify(data)); }catch(e){} }
-function load(){
-  data = defaultData();
+async function initCapabilities(){
   try{
-    const raw = localStorage.getItem(KEY);
-    if(raw){
-      const d = JSON.parse(raw);
-      data = { samples: Array.isArray(d.samples) ? d.samples : [] };
+    if(window.claude && typeof window.claude.use==='function'){
+      db = await window.claude.use('db');
+      assetsApi = await window.claude.use('assets');
     }
   }catch(e){}
+}
+function loadLocal(){
+  try{
+    const raw = localStorage.getItem(LOCAL_KEY);
+    if(raw){ const parsed = JSON.parse(raw); data.samples = Array.isArray(parsed.samples) ? parsed.samples : []; }
+  }catch(e){}
+}
+function saveLocal(){ try{ localStorage.setItem(LOCAL_KEY, JSON.stringify(data)); }catch(e){} }
+
+async function loadData(){
+  if(db){
+    try{
+      const snap = await db.collection('samples').get();
+      data.samples = snap.docs.map(d=>Object.assign({id:d.id}, d.data()));
+      return;
+    }catch(e){}
+  }
+  loadLocal();
+}
+async function persistSample(s){
+  if(db){
+    try{ await db.collection('samples').doc(s.id).set(JSON.parse(JSON.stringify(s))); return; }
+    catch(e){ toast('Save failed — check connection'); }
+  }
+  saveLocal();
+}
+async function persistDeleteSample(id){
+  if(db){
+    try{ await db.collection('samples').doc(id).delete(); return; }
+    catch(e){ toast('Delete failed'); }
+  }
+  saveLocal();
+}
+function blobUrl(assetId){ return assetId ? ('/_blob/'+assetId) : ''; }
+function filesAvailable(){ return !!assetsApi; }
+async function deleteAsset(assetId){
+  if(!assetsApi || !assetId) return;
+  try{ await assetsApi.delete(assetId); }catch(e){}
+}
+function friendlyUploadError(err){
+  const code = err && err.code;
+  if(code==='too_large') return 'File is too large (max 20 MB).';
+  if(code==='unsupported_type') return 'Unsupported file type. Use JPG, PNG, GIF, WebP or PDF.';
+  if(code==='quota_or_state') return 'Storage is full — delete some old files first.';
+  if(code==='rate_limited') return 'Too many uploads at once — wait a moment and try again.';
+  if(code==='not_granted') return 'File uploads need this page opened as your Claude artifact.';
+  return 'Could not upload the file. Please try again.';
 }
 
 // ── HELPERS ─────────────────────────────────────────────────────────────────
@@ -139,6 +219,7 @@ const fmt = v => n(v).toLocaleString('de-AT', {style:'currency', currency:'EUR'}
 const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,8);
 const isoToday = () => new Date().toISOString().slice(0,10);
 function fmtDateShort(iso){ if(!iso) return ''; const d=new Date(iso+'T00:00:00'); if(isNaN(d)) return iso; return d.toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
+function fmtSize(bytes){ bytes=bytes||0; if(bytes<1024) return bytes+' B'; if(bytes<1024*1024) return (bytes/1024).toFixed(1)+' KB'; return (bytes/1024/1024).toFixed(1)+' MB'; }
 let toastTimer;
 function toast(msg){
   let t = $('sb-toast');
@@ -149,6 +230,7 @@ function toast(msg){
   toastTimer=setTimeout(()=>{ t.style.opacity='0'; }, 1600);
 }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function openDatePicker(el){ try{ el.showPicker && el.showPicker(); }catch(e){} }
 
 function navigate(view, extra){
   currentView = view;
@@ -179,6 +261,11 @@ function bulkPill(s){
 function latestRound(s){
   const r = s.rounds||[];
   return r.length ? r[r.length-1] : null;
+}
+function avatarHtml(assetId, size, fallbackIcon){
+  const cls = size==='lg' ? 'avatar avatar-lg' : 'avatar avatar-sm';
+  if(assetId) return `<div class="${cls}"><img src="${blobUrl(assetId)}"/></div>`;
+  return `<div class="${cls}"><span>${fallbackIcon}</span></div>`;
 }
 
 function renderSamples(){
@@ -219,6 +306,7 @@ function renderSamples(){
     :items.map(s=>{
       const lr = latestRound(s);
       return `<div class="row-item" style="cursor:pointer;" onclick="navigate('detail','${s.id}')">
+        ${avatarHtml(s.profilePhotoId,'sm','🧵')}
         <div class="row-item-left">
           <div class="row-item-name">${esc(s.name)||'Unnamed Sample'}</div>
           <div class="row-item-sub">${esc(s.manufacturer)||'No manufacturer'}${s.collection?(' · '+esc(s.collection)):''}${lr?(' · '+fmtDateShort(lr.orderDate)):''}</div>
@@ -232,6 +320,7 @@ function renderSamples(){
         </div>
       </div>`;
     }).join('')}
+    <div class="storage-note">${db?'☁️ Synced &amp; saved automatically to your Claude account':'💾 Saved in this browser only — open via your Claude artifact link for photo/file uploads and account sync'}</div>
   `;
 }
 function setSampleFilter(key,val){ window._sampleFilter[key]=val; renderSamples(); }
@@ -248,10 +337,12 @@ function openAddSample(){
   `;
   showSheet();
 }
-function saveNewSample(){
+async function saveNewSample(){
   const name = $('sm-name').value;
-  const s = {id:uid(), name, manufacturer:$('sm-mfr').value, collection:$('sm-col').value, rounds:[], bulk:{ordered:false,orderDate:'',qty:'',cost:'',notes:''}, ts:Date.now()};
-  data.samples.push(s); save(); closeSheet(); toast('Sample added'); navigate('detail', s.id);
+  const s = {id:uid(), name, manufacturer:$('sm-mfr').value, collection:$('sm-col').value, profilePhotoId:null, rounds:[], techPacks:[], photos:[], bulk:{ordered:false,orderDate:'',qty:'',cost:'',notes:''}, ts:Date.now()};
+  data.samples.push(s);
+  closeSheet(); toast('Sample added'); navigate('detail', s.id);
+  await persistSample(s);
 }
 
 function renderSampleDetail(){
@@ -261,15 +352,28 @@ function renderSampleDetail(){
   $('page-sub').textContent=s.manufacturer||'No manufacturer set';
   $('top-action-btn').classList.add('hidden');
   s.bulk = s.bulk || {ordered:false,orderDate:'',qty:'',cost:'',notes:''};
+  s.techPacks = s.techPacks || [];
+  s.photos = s.photos || [];
   const rounds = s.rounds||[];
   const cols = allCollections().filter(c=>c!==s.collection);
   const totalRoundCost = rounds.reduce((sum,r)=>sum+n(r.cost),0);
+  const canUpload = filesAvailable();
 
   $('page-content').innerHTML = `
     <button class="back-btn" onclick="navigate('list')">← Samples &amp; Bulk</button>
 
     <div class="card">
       <div class="card-title">Item Info</div>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+        ${avatarHtml(s.profilePhotoId,'lg','🖼️')}
+        <div style="flex:1;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          ${canUpload?`
+          <button class="btn btn-outline btn-sm" onclick="$('profile-file-input').click()">${s.profilePhotoId?'Change Photo':'Upload Photo'}</button>
+          ${s.profilePhotoId?`<button class="del-btn" onclick="removeProfilePhoto('${s.id}')">✕</button>`:''}
+          <input type="file" id="profile-file-input" class="hidden-file-input" accept="image/*" onchange="handleProfileUpload('${s.id}', this)"/>
+          `:`<span class="muted-note" style="padding:0;text-align:left;">Photo upload needs this page opened as your Claude artifact.</span>`}
+        </div>
+      </div>
       <div class="field"><label class="field-label">Name</label>
         <div class="input-wrap"><input type="text" value="${esc(s.name||'')}" placeholder="e.g. Heavyweight Hoodie" oninput="updateSample('${s.id}','name',this.value)"/></div></div>
       <div class="field"><label class="field-label">Manufacturer</label>
@@ -278,6 +382,38 @@ function renderSampleDetail(){
         <div class="input-wrap"><input type="text" list="sm-cols-detail" value="${esc(s.collection||'')}" placeholder="e.g. Fall 2026" oninput="updateSample('${s.id}','collection',this.value)"/></div>
         <datalist id="sm-cols-detail">${cols.map(c=>`<option value="${esc(c)}">`).join('')}</datalist>
       </div>
+    </div>
+
+    <div class="card">
+      <div class="section-head"><div class="card-title" style="margin-bottom:0">Tech Packs</div>
+        ${canUpload?`<button class="btn btn-dark btn-sm" onclick="$('techpack-file-input').click()">+ Upload</button>`:''}
+      </div>
+      ${canUpload?`<input type="file" id="techpack-file-input" class="hidden-file-input" accept="application/pdf,image/*" onchange="handleTechPackUpload('${s.id}', this)"/>`:''}
+      ${s.techPacks.length===0?`<div class="muted-note">${canUpload?'No tech packs yet. PDF or image files.':'Tech pack uploads need this page opened as your Claude artifact.'}</div>`
+      :s.techPacks.map(t=>`
+        <div class="row-item">
+          <div class="row-item-left">
+            <div class="row-item-name">📄 ${esc(t.name)}</div>
+            <div class="row-item-sub">${fmtSize(t.size)} · ${fmtDateShort((t.ts?new Date(t.ts).toISOString():'').slice(0,10))}</div>
+          </div>
+          <div class="row-item-right">
+            <a href="${blobUrl(t.assetId)}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">View</a>
+            <button class="del-btn" onclick="deleteTechPack('${s.id}','${t.id}')">✕</button>
+          </div>
+        </div>`).join('')}
+    </div>
+
+    <div class="card">
+      <div class="section-head"><div class="card-title" style="margin-bottom:0">Sample Photos</div>
+        ${canUpload?`<button class="btn btn-dark btn-sm" onclick="openAddPhoto('${s.id}')">+ Add Photo</button>`:''}
+      </div>
+      ${s.photos.length===0?`<div class="muted-note">${canUpload?'No photos yet. e.g. a photo of the zip with a note "wrong colour".':'Photo uploads need this page opened as your Claude artifact.'}</div>`
+      :`<div class="photo-grid">${s.photos.map(p=>`
+        <div class="photo-tile" onclick="editPhotoNote('${s.id}','${p.id}')">
+          <img src="${blobUrl(p.assetId)}"/>
+          <button class="ph-del" onclick="event.stopPropagation();deletePhoto('${s.id}','${p.id}')">✕</button>
+          ${p.note?`<div class="photo-note">${esc(p.note)}</div>`:''}
+        </div>`).join('')}</div>`}
     </div>
 
     <div class="card">
@@ -310,7 +446,7 @@ function renderSampleDetail(){
       ${!s.bulk.ordered?`<div style="text-align:center;padding:10px 0 4px;color:var(--muted);font-size:13px;">Switch to "Ordered" once you place the bulk order.</div>`
       :`
       <div class="field"><label class="field-label">Order Date</label>
-        <div class="input-wrap"><input type="date" value="${s.bulk.orderDate||''}" onchange="updateBulk('${s.id}','orderDate',this.value)"/></div></div>
+        <div class="input-wrap"><input type="date" value="${s.bulk.orderDate||''}" onclick="openDatePicker(this)" onchange="updateBulk('${s.id}','orderDate',this.value)"/></div></div>
       <div class="field"><label class="field-label">Quantity</label>
         <div class="input-wrap"><input type="number" inputmode="decimal" value="${s.bulk.qty||''}" placeholder="e.g. 200" oninput="updateBulk('${s.id}','qty',this.value)"/><span class="input-suffix">pcs</span></div></div>
       <div class="field"><label class="field-label">Bulk Cost</label>
@@ -323,31 +459,143 @@ function renderSampleDetail(){
     <button class="btn btn-red" onclick="deleteSample('${s.id}')">Delete Sample</button>
   `;
 }
-function updateSample(id, field, value){
+async function updateSample(id, field, value){
   const s = data.samples.find(x=>x.id===id); if(!s) return;
-  s[field]=value; save();
+  s[field]=value;
   clearTimeout(window._sampleRenderTimer);
-  window._sampleRenderTimer = setTimeout(()=>{ if(routeExtra===id) renderSampleDetail(); },600);
+  window._sampleRenderTimer = setTimeout(async ()=>{ await persistSample(s); },600);
 }
-function deleteSample(id){
-  if(!confirm('Delete this sample and all its rounds and bulk order info?')) return;
+async function deleteSample(id){
+  if(!confirm('Delete this sample and all its rounds, photos and files?')) return;
+  const s = data.samples.find(x=>x.id===id);
   data.samples = data.samples.filter(x=>x.id!==id);
-  save(); toast('Sample deleted'); navigate('list');
+  toast('Sample deleted'); navigate('list');
+  if(s){
+    if(s.profilePhotoId) deleteAsset(s.profilePhotoId);
+    (s.techPacks||[]).forEach(t=>deleteAsset(t.assetId));
+    (s.photos||[]).forEach(p=>deleteAsset(p.assetId));
+  }
+  await persistDeleteSample(id);
 }
-function setBulkOrdered(id, ordered){
+async function setBulkOrdered(id, ordered){
   const s = data.samples.find(x=>x.id===id); if(!s) return;
   s.bulk = s.bulk || {orderDate:'',qty:'',cost:'',notes:''};
   s.bulk.ordered = ordered;
-  save(); renderSampleDetail();
+  if(ordered && !s.bulk.orderDate) s.bulk.orderDate = isoToday();
+  renderSampleDetail();
+  await persistSample(s);
 }
-function updateBulk(id, field, value){
+async function updateBulk(id, field, value){
   const s = data.samples.find(x=>x.id===id); if(!s) return;
   s.bulk = s.bulk || {ordered:true,orderDate:'',qty:'',cost:'',notes:''};
-  s.bulk[field]=value; save();
+  s.bulk[field]=value;
   clearTimeout(window._bulkRenderTimer);
-  window._bulkRenderTimer = setTimeout(()=>{ if(routeExtra===id) renderSampleDetail(); },600);
+  window._bulkRenderTimer = setTimeout(async ()=>{ await persistSample(s); },600);
 }
 
+// ── PROFILE PHOTO ───────────────────────────────────────────────────────────
+async function handleProfileUpload(sampleId, inputEl){
+  const f = inputEl.files[0]; if(!f) return;
+  const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
+  const oldId = s.profilePhotoId;
+  try{
+    const res = await assetsApi.upload(f);
+    s.profilePhotoId = res.id;
+    renderSampleDetail(); toast('Photo updated');
+    await persistSample(s);
+    if(oldId) deleteAsset(oldId);
+  }catch(e){ alert(friendlyUploadError(e)); }
+  inputEl.value='';
+}
+async function removeProfilePhoto(sampleId){
+  const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
+  const oldId = s.profilePhotoId;
+  s.profilePhotoId = null;
+  renderSampleDetail(); toast('Photo removed');
+  await persistSample(s);
+  if(oldId) deleteAsset(oldId);
+}
+
+// ── TECH PACKS ───────────────────────────────────────────────────────────────
+async function handleTechPackUpload(sampleId, inputEl){
+  const f = inputEl.files[0]; if(!f) return;
+  const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
+  try{
+    const res = await assetsApi.upload(f);
+    s.techPacks = s.techPacks||[];
+    s.techPacks.push({id:uid(), assetId:res.id, name:f.name, size:f.size, ts:Date.now()});
+    renderSampleDetail(); toast('Tech pack uploaded');
+    await persistSample(s);
+  }catch(e){ alert(friendlyUploadError(e)); }
+  inputEl.value='';
+}
+async function deleteTechPack(sampleId, tpId){
+  if(!confirm('Delete this tech pack?')) return;
+  const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
+  const tp = (s.techPacks||[]).find(x=>x.id===tpId);
+  s.techPacks = (s.techPacks||[]).filter(x=>x.id!==tpId);
+  renderSampleDetail(); toast('Tech pack deleted');
+  await persistSample(s);
+  if(tp) deleteAsset(tp.assetId);
+}
+
+// ── SAMPLE PHOTOS (with notes) ────────────────────────────────────────────
+function openAddPhoto(sampleId){
+  $('sheet-content').innerHTML = `
+    <div class="sheet-title">Add Photo</div>
+    <div class="field"><label class="field-label">Photo</label>
+      <div class="input-wrap"><input id="ph-file" type="file" accept="image/*"/></div></div>
+    <div class="field" style="margin-bottom:0"><label class="field-label">Note</label>
+      <div class="input-wrap"><input id="ph-note" type="text" placeholder="e.g. zip wrong colour"/></div></div>
+    <button class="btn btn-dark" id="ph-save-btn" style="margin-top:14px;" onclick="savePhoto('${sampleId}')">Add Photo</button>
+  `;
+  showSheet();
+}
+async function savePhoto(sampleId){
+  const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
+  const f = $('ph-file').files[0];
+  if(!f){ alert('Choose a photo first'); return; }
+  const note = $('ph-note').value;
+  const btn = $('ph-save-btn'); if(btn){ btn.disabled=true; btn.textContent='Uploading…'; }
+  try{
+    const res = await assetsApi.upload(f);
+    s.photos = s.photos||[];
+    s.photos.push({id:uid(), assetId:res.id, note, ts:Date.now()});
+    closeSheet(); toast('Photo added'); navigate('detail', sampleId);
+    await persistSample(s);
+  }catch(e){ alert(friendlyUploadError(e)); if(btn){ btn.disabled=false; btn.textContent='Add Photo'; } }
+}
+function editPhotoNote(sampleId, photoId){
+  const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
+  const p = (s.photos||[]).find(x=>x.id===photoId); if(!p) return;
+  $('sheet-content').innerHTML = `
+    <div class="sheet-title">Edit Photo</div>
+    <img src="${blobUrl(p.assetId)}" style="width:100%;border-radius:14px;margin-bottom:14px;display:block;"/>
+    <div class="field" style="margin-bottom:0"><label class="field-label">Note</label>
+      <div class="input-wrap"><input id="ph-note-edit" type="text" value="${esc(p.note||'')}" placeholder="e.g. zip wrong colour"/></div></div>
+    <button class="btn btn-dark" style="margin-top:14px;" onclick="savePhotoNote('${sampleId}','${photoId}')">Save Note</button>
+    <button class="btn btn-red" style="margin-top:10px;" onclick="deletePhoto('${sampleId}','${photoId}')">Delete Photo</button>
+  `;
+  showSheet();
+}
+async function savePhotoNote(sampleId, photoId){
+  const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
+  const p = (s.photos||[]).find(x=>x.id===photoId); if(!p) return;
+  p.note = $('ph-note-edit').value;
+  closeSheet(); toast('Note updated'); navigate('detail', sampleId);
+  await persistSample(s);
+}
+async function deletePhoto(sampleId, photoId){
+  if(!confirm('Delete this photo?')) return;
+  const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
+  const p = (s.photos||[]).find(x=>x.id===photoId);
+  s.photos = (s.photos||[]).filter(x=>x.id!==photoId);
+  closeSheet(); toast('Photo deleted'); navigate('detail', sampleId);
+  await persistSample(s);
+  if(p) deleteAsset(p.assetId);
+}
+
+// ── SAMPLE ROUNDS ───────────────────────────────────────────────────────────
 function openAddRound(sampleId, roundId){
   const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
   const existing = roundId ? (s.rounds||[]).find(r=>r.id===roundId) : null;
@@ -376,9 +624,9 @@ function renderRoundSheet(sampleId, roundId, existing, draft){
   $('sheet-content').innerHTML = `
     <div class="sheet-title">${existing?'Edit':'New'} Sample Round</div>
     <div class="field"><label class="field-label">Order Date</label>
-      <div class="input-wrap"><input id="rd-order" type="date" value="${orderDate}"/></div></div>
+      <div class="input-wrap"><input id="rd-order" type="date" value="${orderDate}" onclick="openDatePicker(this)"/></div></div>
     <div class="field"><label class="field-label">Sample Received</label>
-      <div class="input-wrap"><input id="rd-recv" type="date" value="${sampleDate}"/></div></div>
+      <div class="input-wrap"><input id="rd-recv" type="date" value="${sampleDate}" onclick="openDatePicker(this)"/></div></div>
     <div class="field"><label class="field-label">Verdict — Was It Good?</label>
       <div class="type-tabs">
         <button class="type-tab ${v==='good'?'active':''}" onclick="setRoundVerdict('${sampleId}','${roundId||''}','good')">Good</button>
@@ -393,7 +641,7 @@ function renderRoundSheet(sampleId, roundId, existing, draft){
     <button class="btn btn-dark" style="margin-top:14px;" onclick="saveRound('${sampleId}','${roundId||''}')">${existing?'Save Changes':'Add Round'}</button>
   `;
 }
-function saveRound(sampleId, roundId){
+async function saveRound(sampleId, roundId){
   const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
   s.rounds = s.rounds||[];
   const rec = {
@@ -410,18 +658,23 @@ function saveRound(sampleId, roundId){
   } else {
     s.rounds.push(rec);
   }
-  save(); closeSheet(); toast(roundId?'Round updated':'Round added'); navigate('detail', sampleId);
+  closeSheet(); toast(roundId?'Round updated':'Round added'); navigate('detail', sampleId);
+  await persistSample(s);
 }
-function deleteRound(sampleId, roundId){
+async function deleteRound(sampleId, roundId){
   if(!confirm('Delete this sample round?')) return;
   const s = data.samples.find(x=>x.id===sampleId); if(!s) return;
   s.rounds = (s.rounds||[]).filter(r=>r.id!==roundId);
-  save(); toast('Round deleted'); navigate('detail', sampleId);
+  toast('Round deleted'); navigate('detail', sampleId);
+  await persistSample(s);
 }
 
 // ── INIT ────────────────────────────────────────────────────────────────────
-load();
-render();
+(async function init(){
+  await initCapabilities();
+  await loadData();
+  render();
+})();
 </script>
 </body>
 </html>

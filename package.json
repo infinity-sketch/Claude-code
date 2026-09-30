@@ -1,0 +1,9 @@
+{
+  "name": "claude-code-apps",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test \"tests/**/*.test.js\"",
+    "serve:lumiere": "python3 -m http.server 8080 --directory docs/lumiere"
+  }
+}
